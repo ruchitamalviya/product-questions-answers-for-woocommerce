@@ -1,4 +1,4 @@
-	<?php  
+<?php  
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -39,7 +39,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	public function ets_question_tab( $tabs ) { 
 	     
 	    $tabs['ask'] = array(
-		    'title'     =>  __( 'Ask me', 'woocommerce'),
+		    'title'     =>  __( __("Q&A",'ets_q_n_a'), 'woocommerce'),
 		    'priority'  => 50,
 		    'callback'  => array($this , 'ets_ask_qustion_tab')
     	);  
@@ -89,7 +89,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			//send email notification to admin 
 			$response = array(
 				'productId' 	=> $productId,
-				'message' 		=> "Question submit successfully",
+				'message' 		=> __("Question submit successfully",'ets_q_n_a'),
 				'ets_get_question_data'	=> $result 
 			);   
 			echo json_encode($response);
@@ -144,7 +144,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 
 		 	?>
 			<form action="#" method="post"  id="ets-qus-form" name="form">  
-				<textarea id="myInput" cols="45" rows="3" id="name" class="ets-qa-textarea"   name="question" value="" placeholder="Enter Question Here." height= "75px" ></textarea>
+				<textarea id="myInput" cols="45" rows="3" id="name" class="ets-qa-textarea"   name="question" value="" placeholder="<?php echo __('Enter your question here...','ets_q_n_a') ?>" height= "75px" ></textarea>
 				<input type="hidden" id="useremail" class="productId" name="usermail" value="<?php echo $uesrEmail ?>">
 				<input type="hidden" id="custId" class="productId" name="product_id" value="<?php echo $productId ?>">
 				<input type="hidden" id="productlength" class="productlength" name="Product_Qa_Length" value="<?php echo $productQaLength ?>">
@@ -153,7 +153,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				<input type="hidden" id="producttitle" name="ets_Product_Title" value="<?php echo $productTitle ?>">
 				<div class="ets-display-message"><p></p></div>
 				<div class="ets-dis-message-error"><p></p></div>
-				<button id="ets-submit" type="submit" name="submit" class="btn btn-info" >Submit</button> 
+				<button id="ets-submit" type="submit" name="submit" class="btn btn-info" ><?php echo __('Submit','ets_q_n_a'); ?></button> 
 			</form> 
 			<div id="ets_product_qa_length"><p></p></div>   
 			<?php 	
@@ -168,7 +168,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			</form>
 			<div id="ets_product_qa_length"><p></p></div> 
 				<a href="<?php echo 'http://localhost/wordpress/wp-login.php' ?>" class="ets-load-more">
-				Plese Login Your Account.
+				<?php echo _e('Please login to post questions.', 'ets_q_n_a'); ?>
 				</a> 
 			<?php  
 			}  
@@ -183,7 +183,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
             } 
 			if($loadMoreButton == "true") { 
 				if(empty($loadMoreButtonName)){
-					$loadMoreButtonName = "Load More";
+					$loadMoreButtonName = __("Load More",'ets_q_n_a');
 					update_option( 'ets_load_more_button_name', $loadMoreButtonName );
 				}  
 				if(!empty($etsGetQuestion)){ 
@@ -201,32 +201,35 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 						foreach ($etsGetQuestion as $key => $value) {
 							?>
 							<div class="ets-accordion">
-								<span class="que-content"><b>Question:</b></span>
+								<span class="que-content"><b><?php echo __('Question:','ets_q_n_a') ?></b></span>
 								<span class="que-content-des"><?php echo $value['question'];?></span>
-								<h6><?php echo $value['user_name']. "<br>";?> <?php echo $value['date'];?></h6>
+								<h6><?php echo $value['user_name']. "<br>";?><?php echo $value['date']; ?></h6>
 							</div>
 							<div class="ets-panel">
 								<?php 
 								if(!empty($value['answer'])){?>
-									<span class="ans-content"><b>Answer:</b>
+									<span class="ans-content"><b><?php echo __('Answer:','ets_q_n_a') ?></b>
 									</span>
 									<span class="ans-content-des"><?php echo $value['answer'];?>
 									</span>
 								 
 							<?php 
 								} else { ?>
-								<span class="ans-content"><b>Answer:</b></span>
-								<span class="ans-content-des"><?php echo "Answer awaiting...";?>
+								<span class="ans-content"><b><?php echo __('Answer:','ets_q_n_a') ?></b></span>
+								<span class="ans-content-des"><i><?php echo __("Answer awaiting...",'ets_q_n_a');?></i>
 								</span>
 								<?php
 							}?>
-							</div><?php  
+							</div>
+
+							<?php  
 							$count++;
 							if($count > $productQaLength){
 								break;
 							}  
 						}
 						?> 
+						<div class='ets-accordion-response-add'></div>
 						</div>
 						<?php
 					} else {
@@ -234,27 +237,27 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 						?>
 						<div class="table-responsive my-table">
 						<table class="table table-striped">
+						<tbody class="table1">
 						<?php  
 						foreach ($etsGetQuestion as $key => $value) {
 							?>
 							<tr class="ets-question-top">
-								<td class="ets-question-title"><p>Question:</p></td>
+								<td class="ets-question-title"><p><?php echo __('Question:','ets_q_n_a'); ?></p></td>
 								<td class="ets-question-description"><p><?php echo $value['question'];?></p></td> 
-								<td class="pull-right"><h6 class="user-name"><?php echo $value['user_name'] . "<br>";    
-								echo ($value['date']);
-								$value['date'];?></h6></td>
+								<td class="ets-cont-right"><h6 class="user-name"><?php echo $value['user_name'] . "<br>";    
+								echo ($value['date']); ?></h6></td>
 							</tr>
 							<?php 
 							if(!empty($value['answer'])){?>
 								<tr>
-									<td class="ets-question-title"><p>Answer:</p></td>
+									<td class="ets-question-title"><p><?php echo __('Answer:','ets_q_n_a'); ?></p></td>
 									<td colspan="2"><p> <?php echo $value['answer'];?></p></td> 
 								</tr> 
 								<?php 
 							} else { ?>
 								<tr>
-									<td class="ets-question-title"><p>Answer:</p></td>
-									<td colspan="2"><h6><p> <?php echo "Answer awaiting...";?> </p></h6></td>	
+									<td class="ets-question-title"><p><?php echo __('Answer:','ets_q_n_a'); ?></p></td>
+									<td colspan="2" class="ets-no-answer" ><h6><p><i><?php echo __("Answer awaiting...",'ets_q_n_a');?></i></p></h6></td>	
 								</tr> 
 								<?php
 							}
@@ -263,12 +266,12 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 								break;
 							}  
 						} ?>
+						</tbody>
 						</table>  
 					</div>
-					<?php
+						<?php
 					}
-					 ?> 
-					<div class="table1" id="ets-question-detail-ajax"></div>
+					 	?>  
 					<button type="submit" id="ets-load-more" class="btn btn-success" name="ets_load_more" value=""><?php echo $loadMoreButtonName; ?></button>
 					<div class="ets_pro_qa_length"><p hidden><?php echo $keyData;?><p></div>
 					<?php
@@ -283,24 +286,24 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 					foreach ($etsGetQuestion as $key=>$value) {
 						?> 
 						<tr class="ets-question-top">
-								<td class="ets-question-title"><p>Question:</p></td>
+								<td class="ets-question-title"><p><?php echo __('Question:','ets_q_n_a'); ?></p></td>
 								<td class="ets-question-description"><p><?php echo $value['question'];?></p></td> 
-								<td class="pull-right"><h6 class="user-name"><?php echo $value['user_name'] . "<br>";    
+								<td class="ets-cont-right"><h6 class="user-name"><?php echo $value['user_name'] . "<br>";    
 								echo ($value['date']);
-								$value['date'];?></h6></td>
+								?></h6></td>
 						</tr>
 
 						<?php 
 						if(!empty($value['answer'])){?>
 							<tr>
-								<td class="ets-question-title"><p>Answer:</p></td>
+								<td class="ets-question-title"><p><?php echo __('Answer:','ets_q_n_a'); ?></p></td>
 								<td colspan="2"><p> <?php echo $value['answer'];?></p></td> 
 							</tr> 
 							<?php 
 						} else { ?>
 							<tr>
-								<td class="ets-question-title"><p>Answer:</p></td>
-								<td colspan="2"><h6><p> <?php echo "Answer awaiting...";?> </p></h6></td>	
+								<td class="ets-question-title"><p><?php echo __('Answer:','ets_q_n_a'); ?></p></td>
+								<td colspan="2" class="ets-no-answer"><h6><p><i><?php echo __("Answer awaiting...",'ets_q_n_a');?></i></p></h6></td>	
 							</tr> 
 							<?php
 						}
@@ -342,22 +345,22 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				foreach ($etsGetQuestion as $key => $value) { 
 					?>
 					<div class="ets-accordion">
-								<span class="que-content ans-content"><b>Question:</b></span>
+								<span class="que-content ans-content"><b><?php echo __('Question:','ets_q_n_a'); ?></b></span>
 								<span class="que-content-des"><?php echo $value['question'];?></span>
-								<h6><?php echo $value['user_name']. "<br>";?> <?php echo $value['date'];?></h6>
+								<h6><?php echo $value['user_name']. "<br>";?><?php echo $value['date'];?></h6>
 							</div>
 							<div class="ets-panel">
 								<?php 
 								if(!empty($value['answer'])){?>
-									<span class="ans-content"><b>Answer:</b>
+									<span class="ans-content"><b><?php echo __('Answer:','ets_q_n_a'); ?></b>
 									</span>
 									<span class="ans-content-des"><?php echo $value['answer'];?>
 									</span>
 								 
 							<?php 
 								} else { ?>
-								<span class="ans-content"><b>Answer:</b></span>
-								<span class="ans-content-des"><?php echo "Answer awaiting...";?>
+								<span class="ans-content"><b><?php echo __('Answer:','ets_q_n_a'); ?></b></span>
+								<span class="ans-content-des"><i><?php echo __("Answer awaiting...",'ets_q_n_a');?></i>
 								</span> 
 								<?php
 							}?>
@@ -373,30 +376,31 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			} else {
 				//Show Question Answer Listing Type Table With Load More
 				?> 
-				<div class="table-responsive my-table">
-				<table class="table table-striped"> 
+				 
+				  
 				<?php  
 
 				 foreach ($etsGetQuestion as $key => $value) { 
 					?> 
 					<tr class="ets-question-top">
-						<td class="ets-question-title"><p>Question:</p></td>
+						<td class="ets-question-title"><p><?php echo __("Question:","ets_q_n_a");?></p></td>
 						<td class="ets-question-description"><p><?php echo $value['question'];?></p></td> 
-						<td class="pull-right"><h6 class="user-name"><?php echo $value['user_name'] . "<br>";    
-						echo ($value['date']);
-						$value['date'];?></h6></td>
+						<td class="ets-cont-right"><h6 class="user-name"><?php echo $value['user_name'] . "<br>";    
+							echo ($value['date']); 
+					 		?></h6>
+					 	</td>
 					</tr>
 					<?php 
 					if(!empty($value['answer'])){?>
 						<tr>
-							<td class="ets-question-title"><p>Answer:</p></td>
+							<td class="ets-question-title"><p><?php echo __("Answer:","ets_q_n_a");?></p></td>
 							<td colspan="2"><p> <?php echo $value['answer'];?></p></td> 
 						</tr> 
 						<?php 
 					} else { ?>
 						<tr>
-							<td class="ets-question-title"><p>Answer:</p></td>
-							<td colspan="2"><h6><p> <?php echo "Answer awaiting...";?> </p></h6></td>	
+							<td class="ets-question-title"><p><?php echo __("Answer:","ets_q_n_a");?></p></td>
+							<td colspan="2" class="ets-no-answer"><h6><p> <i><?php echo __("Answer awaiting...",'ets_q_n_a');?></i></p></h6></td>	
 						</tr> 
 						<?php
 					}
@@ -406,7 +410,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 					}  
 				} 
 				?> 
-				</table>  
+				 
 				<?php
 				
 			}
@@ -442,5 +446,4 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		 
 	}	 
 } 			
-$etsWooProductUserQuestionAnswer = new ETS_WOO_PRODUCT_USER_QUESTION_ANSWER();	
-?>
+$etsWooProductUserQuestionAnswer = new ETS_WOO_PRODUCT_USER_QUESTION_ANSWER(); 

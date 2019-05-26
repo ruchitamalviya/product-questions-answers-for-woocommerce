@@ -45,6 +45,7 @@ jQuery(document).ready(function(){
 			success: function(res) {  
 				offset = res.offset;  
 				jQuery('.table1').append(res.htmlData);  
+				 jQuery('.ets-accordion-response-add').append(res.htmlData);
 				jQuery('#ets_product_qa_length p').html(offset).hide(); 
 				if(offset >= qalength ){
 					jQuery("#ets-load-more").hide();
@@ -55,12 +56,6 @@ jQuery(document).ready(function(){
 }); 
 
 jQuery(document).on('click','.ets-accordion',function(){
-	jQuery(this).addClass('active');
-	let nextElm = jQuery(this).next().css('display');
-	if(nextElm=='block'){
-		jQuery(this).next().css('display','none');
-	}
-	else{
-		jQuery(this).next().css('display','block');
-	}	
+	jQuery(this).next().slideToggle();
+	 
 });	

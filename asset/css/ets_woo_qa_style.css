@@ -7,11 +7,13 @@
 	border: 0px;
 	border-bottom: 1px solid #000;
 }
+#ets-submit{
+    margin-bottom: 15px; 
+}
 .ets-accordion {
-    background-color: #eee;
+    background-color: #f1f1f1   ;
     color: #444;
     cursor: pointer;
-    padding: 0px 18px;
     width: 100%;
     border: none;
     text-align: left;
@@ -19,11 +21,21 @@
     font-size: 15px;
     transition: 0.4s;
     display: inline-flex;
-    padding: 15px;
+    align-items: center; 
+    padding: 5px 15px;
+    border-bottom: 1px solid #444;
+    margin-bottom: 5px;
 }
 
 .active .ets-accordion:hover {
     background-color: #ccc; 
+}
+.ets-cont-right{
+    text-align: right;
+    margin-right: 5px;
+}
+.ets-accordion h6{
+    text-align: right;
 }
 
 .ets-panel {
@@ -65,6 +77,7 @@
 }
 #ets-delete-qa{
     min-width: 20px;
+    cursor: pointer;
 }
 .ets-qa-drop{
     position: absolute; 
@@ -73,6 +86,7 @@
 } 
 .ets-scroll-move{
     cursor: all-scroll;
+    height: 20px;
 }
 .border{
     border-bottom: 1px solid #cbcbcb;
@@ -92,10 +106,9 @@
     border:1px solid #ccc;
 }
 .ets-qa-item p label{
-    font-size: large;
-    font-family: initial;
+    font-size: 13px; 
     color: #120e51;
-    font-style: italic;
+    font-style: normal;
 }
 .ets-add-new-qa { 
     margin-bottom: 21px;
@@ -163,7 +176,7 @@
 }
 .my-table table tr td p{
     font-size:14px;
-    font-family: initial;
+    /*font-family: initial;*/
     margin: 0
 }   
 .my-table table tr td.ets-question-title p{ 
@@ -171,7 +184,7 @@
 }
 .my-table table tr td h6{
     margin: 0px;
-    font-size: 14px;
+    font-size: 12px;
 }
 .ets-display-message{
     color: #148c15;
@@ -200,6 +213,10 @@
     float:left;
     font-size: 14px;
     line-height: normal;
+    font-size: 13px;
+}
+.ets-no-answer h6 p i{
+    font-weight: 500;
 }
 .ets-panel .ans-content-des{
     font-size: 14px;
@@ -216,6 +233,7 @@
     display: inline-block;
     float:left;
     line-height: normal;
+    font-size: 13px;
 }
 .ets-accordion .que-content-des{
     width: 70%;
@@ -230,6 +248,7 @@
     margin:0px;
     color: #8f8f8f;
     font-size: 12px;
+    padding-top: 0px;
 }
 #ets-question-detail-ajax{
     margin: 0px !important;

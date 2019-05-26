@@ -3,70 +3,70 @@
 class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER 
 { 	
 	public function __construct() {
-		/**
-		* Add new Theam option in the admin Painel
-		*/
-
+		
+		//Add new Theam option in the admin Painel.
 		add_action('admin_menu', array($this, 'ets_product_q_a'));
 
-		//Add CSS file
+		//Add CSS file.
 		add_action( 'admin_enqueue_scripts',array($this, 'ets_woo_qa_admin_style'));  
 
-		/**
-		* Tab
-		*/
+		// add new Tab. 
 		add_filter('woocommerce_product_data_tabs', array($this, 'ets_admin_answer_tabs'));
 		
-		/**
-		* Add the script file in the drop & drag Question And Answer Listing
-		*/  
+		// Add the script file in the drop & drag Question And Answer Listing.
 		add_action( 'admin_enqueue_scripts', array($this, 'ets_product_panels_scripts_ui' ));
-		/**
-		* Create the admin Url in Script Variable	
-		*/
+		
+		// Create the admin Url in Script Variable.	
 		add_action( 'admin_enqueue_scripts', array($this, 'ets_admin_woo_qa_scripts' ));
 		
-		/*	
-		* Tab content
-		*/
+		// Tab content.
 		add_action( 'woocommerce_product_data_panels', array($this, 'ets_product_panels'));
 
-		/**
-		* Save Product data in the admin Tab
-		*/
+		// Save Product data in the admin Tab.
 		add_action( 'woocommerce_process_product_meta', array($this, 'ets_woo_product_admin_qa') , 10, 1 );
-		//variable Creation js
-
-		/**
-		 * Save question order in DB
-		 */
+		
+		// Save question order in DB.
 		add_action('wp_ajax_ets_qa_save_order', array($this, 'saveQaOrder'));
+		
+		// Add new Question And Answer.
 		add_action('wp_ajax_ets_add_new_qusetion_answer', array($this, 'addNewQuestionAnswer'));
+
+		// Delete the Question And Answer.
 		add_action('wp_ajax_etsdelete_qusetion_answer', array($this, 'delete_qusetion_answer'));
 	}
 
 	/**
-	* Add new Theam option in the admin Panel
-	*/ 
+	 * Add new Theam option in the admin Panel
+	 */ 
 	public function ets_product_q_a(){
-		add_menu_page('Products Q & A', 'Products Q & A', 'manage_options', 'theme-options', array($this, 'ets_load_more_question_answer'), 'dashicons-info ',59);
+		add_menu_page(__('Products Q & A','ets_q_n_a'), __('Products Q & A','ets_q_n_a'), 'manage_options', 'theme-options', array($this, 'ets_load_more_question_answer'), 'dashicons-info ',59);
 	}
 	 
 	/**
-	* Create Sub menu option
-	*/
+	 * Create Sub menu option
+	 */
 	public function ets_load_more_question_answer(){
 		$loadButton = get_option( 'ets_load_more_button' ); 
+
+		if(empty($loadButton)){  	
+			update_option( 'ets_load_more_button','true' );
+			update_option( 'ets_product_q_qa_list_length', '10' );
+			update_option( 'ets_load_more_button_name', __("Load More",'ets_q_n_a') );
+			update_option( 'ets_product_qa_paging_type', "normal" );
+			$loadButton = get_option( 'ets_load_more_button' );
+		}
+
 		$lengthOfList = get_option( 'ets_product_q_qa_list_length');
 		$buttonName = get_option( 'ets_load_more_button_name');
 		$pagingType = get_option( 'ets_product_qa_paging_type');
 
 		if (isset($_POST['ets_load_more'])) {
-			$loadButton   =  $_POST['ets_load_more_active']; 
+			$loadButton   =  isset($_POST['ets_load_more_active']) ? $_POST['ets_load_more_active'] : 'false' ; 
 			$lengthOfList = $_POST['ets_length_of_list']; 
 			$buttonName   = $_POST['ets_load_more_button_name'];  
 			$pagingType   = $_POST['paging_type'];
-			if(!empty($loadButton)){
+			 
+			if($loadButton == 'true'){ 
 				if(!empty($lengthOfList)){
 					update_option( 'ets_load_more_button', $loadButton );
 					update_option( 'ets_product_q_qa_list_length', $lengthOfList );
@@ -74,14 +74,15 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					if(!empty($buttonName)){
 						update_option( 'ets_load_more_button_name', $buttonName );
 					} else {
-						$buttonName = "Load More";
+						$buttonName = __("Load More",'ets_q_n_a');
 						update_option( 'ets_load_more_button_name', $buttonName );
 					} 
 				} else {
-					$error = "* Plese Set The Page Size.";
+					$lengthOfList = 10;
+					update_option( 'ets_product_q_qa_list_length', $lengthOfList );
 				}
 			} else {
-				$buttonName = "Load More";
+				$buttonName = __("Load More",'ets_q_n_a');		
 				update_option( 'ets_load_more_button', $loadButton );
 				update_option( 'ets_product_q_qa_list_length', $lengthOfList );
 				update_option( 'ets_load_more_button_name', $buttonName );
@@ -89,34 +90,34 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			}  	 
 		} 
 		?><div class="wrap"><div id="icon-options-general" class="icon32"><br></div>
-		<h2>Product Q & A Setting</h2></div>
+		<h2><?php echo __("Product Q & A Setting",'ets_q_n_a'); ?></h2></div>
 		<form method="post" name="load_more_form" action="#"> 
 			 	
 			<table>
 				<tr>
-					<td><h4>Load More Button:</h4></td>
+					<td><h4><?php echo __('Load More :','ets_q_n_a'); ?></h4></td>
 					<td> 
-						<input type="checkbox" <?php if(!empty($loadButton)) { echo $loadButton; ?> checked <?php }?> name="ets_load_more_active" value="true" >
+						<input type="checkbox" <?php if(($loadButton == 'true')) { echo $loadButton; ?> checked <?php }?> name="ets_load_more_active" value="true" >
 					</td> 	
 				</tr> 
 				<tr>
-					<td><h4>Page Size:</h4></td>
+					<td><h4><?php echo __('Page Size:','ets_q_n_a'); ?></h4></td>
 					<td><input type="number" name="ets_length_of_list" value="<?php echo isset($lengthOfList) ? $lengthOfList : '';?>"  min="1"  ></td>
 				</tr> 
 				<tr>
-					<td><h4>Paging Button Name: </h4></td>
+					<td><h4><?php echo __('Paging Button Name: ','ets_q_n_a'); ?></h4></td>
 					<td><input type="text" name="ets_load_more_button_name" value="<?php echo isset($buttonName) ? $buttonName : '';?>" width="50px" height="90px"></td>
 				</tr>
 				<tr>
-					<td><h4>Paging Type: </h4></td>
+					<td><h4><?php echo __('Paging Type:','ets_q_n_a'); ?> </h4></td>
 					<td><select name="paging_type">
-					    	<option value="normal" <?php if($pagingType == "normal") { ?> selected <?php }?>>Normal</option>
-					    	<option value="accordion"  <?php if($pagingType == "accordion") { ?> selected <?php }?>>Accordion</option>
+					    	<option value="normal" <?php if($pagingType == "normal") { ?> selected <?php }?>><?php echo __('Normal','ets_q_n_a');?></option>
+					    	<option value="accordion"  <?php if($pagingType == "accordion") { ?> selected <?php }?>><?php echo __('Accordion','ets_q_n_a');?></option>
 						</select>
 					</td>
 				</tr>
 				<tr><td></td>
-					<td><button type="submit" name="ets_load_more">Submit</button>
+					<td><button type="submit" name="ets_load_more"><?php echo __('Submit',"ets_q_n_a"); ?></button>
 				</tr>
 			</table>
 		</form>   
@@ -125,12 +126,12 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	} 
 
  	/**
-	* Tab
-	*/
+	 * Tab
+	 */
  	public function ets_admin_answer_tabs( $tabs ){
  
 		$tabs['admin_answer'] = array(
-			'label'    		=> 'Questions',
+			'label'    		=> 'Q & A',
 			'target'   		=> 'ets_product_data', 
 			'priority' 		=> 100,  
 			'id'			=> 'ets_question',
@@ -140,8 +141,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	}
 	 
 	/**
-	* Include Drag and Drop Script jquery-ui
-	*/
+	 * Include Drag and Drop Script jquery-ui
+	 */
   	public function ets_product_panels_scripts_ui(){    
 		wp_register_script(
 			'jquery-ui-sortable', 
@@ -150,8 +151,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		wp_enqueue_script('jquery-ui-sortable'); 
 	}  
 	/*
-	* Tab content
-	*/
+	 * Tab content
+	 */
 	public function ets_product_panels(){ 
 		?>
 		<div id="ets_product_data" class="panel woocommerce_options_panel hidden"> 
@@ -222,7 +223,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'    	  => "ets_question[$key]",  
 								'name'		  => "ets_question[$key]",
 								'value'       => $value['question'],
-								'label'       => 'Question :'  
+								'label'       => __('Question :','ets_q_n_a')  
 							) 
 						);
 						woocommerce_wp_textarea_input( 
@@ -230,7 +231,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'		  => "ets_answer[$key]",
 								'name'		  => "ets_answer[$key]",
 								'value'       =>  $value['answer'], 
-								'label'       => 'Answer :' 
+								'label'       => __('Answer :','ets_q_n_a') 
 							) 
 						);	
 						
@@ -270,7 +271,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								array(  
 									'name'		  => 'ets_first_question',
 									'value'       => '',
-									'label'       => 'Question :',
+									'label'       => __('Question :','ets_q_n_a'),
 									'desc_tip'    => true, 
 									'id'		  => 'ets_question_data'	 
 								) 
@@ -279,7 +280,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								array( 
 									'name'		  => 'ets_first_answer',
 									'value'       =>  '',
-									'label'       => 'Answer :',
+									'label'       => __('Answer :','ets_q_n_a'),
 									'desc_tip'    => true, 	
 									'id'		  => 'ets_answer_data' 
 								) 
@@ -292,15 +293,16 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		 		<li class="ets-new-qa-field"></li>  
 		 		</ul> 
 		 		<input type="hidden" name="ets-new-question-Answer-count" id="ets-new-question-Answer-count" value=""> 
-				<a href="#" type="submit" name="ets-add-new-qa" class="ets-add-new-qa "> +Add New</a>   
+				<a href="#" type="submit" name="ets-add-new-qa" class="ets-add-new-qa "> <?php echo __('+Add New',"ets_q_n_a"); ?></a>   
 				
 			</div>
 		</div> 	
 		<?php
-	} 
+	}
+
 	/**
-	* Save Product data in the admin Tab
-	*/ 
+	 * Save Product data in the admin Tab
+	 */ 
 	public function ets_woo_product_admin_qa( $productId ){   
 		// to get data
 		$userId = $_POST['ets_user_id']; 
@@ -399,7 +401,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		 		$url = get_permalink( $productId);         // to get product url
 		  		$site_url = get_site_url();                // to get site url
 				$site_name = get_bloginfo('name');         // to set site name
-		 		$subject = "New Question: " . get_bloginfo('name');
+		 		$subject = __("New Question: ",'ets_q_n_a') . get_bloginfo('name');
 				$message = "<a href='$site_url'>" . $site_name . "</a> added a answer on the <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
 				if(!empty($answers))
 				{	
@@ -409,6 +411,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	    }
 	} 
 
+	/**
+	 * Change Order Q&A 
+	 */
 	public function saveQaOrder() { 
 		$productId = $_POST['product_id'];  
  		$changedOrderQaList = $_POST['ets-qa-item']; 
@@ -420,6 +425,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		update_post_meta( $productId, 'ets_question_answer',  $newOrderQaList );		 
 	}
 
+	/**
+	 * Secipt File include.
+	 */
 	public function ets_admin_woo_qa_scripts() {
 		global $pagenow;
 
@@ -443,6 +451,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		}
 	}
 
+	/**
+	 * Include custome style sheet
+	 */
 	public function ets_woo_qa_admin_style() {
 		wp_register_style(
 		    'ets_woo_qa_style_css',
@@ -451,6 +462,10 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		wp_enqueue_style( 'ets_woo_qa_style_css');
 		 
 	}
+
+	/**
+	 * Delete Q&A pare.
+	 */
 	public function delete_qusetion_answer(){
 		$questionIndex = $_POST['questionIndex'];
 		$productId = $_POST['prdId']; 
@@ -459,6 +474,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		update_post_meta( $productId, 'ets_question_answer',  $productQas ); 
 	}
 
+	/**
+	 * Add new Q&A field on click Add new Link
+	 */
 	public function addNewQuestionAnswer(){
 		$count = $_POST['count']; 
 		if(empty($count)){
@@ -469,7 +487,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array(  
 				'name'		  => "ets_new_question[$count]",
 				'value'       => '',
-				'label'       => 'Question :',
+				'label'       => __('Question :','ets_q_n_a'),
 				'desc_tip'    => true,  	 
 			) 
 		);
@@ -477,7 +495,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array( 
 				'name'		  => "ets_new_answer[$count]",
 				'value'       =>  '', 
-				'label'       => 'Answer :',
+				'label'       => __('Answer :','ets_q_n_a'),
 				'desc_tip'    => true,
 			) 
 		); 
@@ -494,4 +512,3 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 
 } 	
 $etsWooProductAdminQuestionAnswer = new ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER(); 
-?> 
