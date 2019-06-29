@@ -2,37 +2,44 @@
 // admin controller
 class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER 
 { 	
-	public function __construct() {
-		
-		//Add new Theam option in the admin Painel.
-		add_action('admin_menu', array($this, 'ets_product_q_a'));
+	public function __construct() { 
+		//initalizing admin features.
+		add_action('init', array($this, 'checkIsAdmin')); 
+	}
 
-		//Add CSS file.
-		add_action( 'admin_enqueue_scripts',array($this, 'ets_woo_qa_admin_style'));  
+	public function checkIsAdmin(){
+		if(current_user_can('shop_manager') || current_user_can('administrator')){ 
+			
+			// Save Product data in the admin Tab.
+			add_action( 'woocommerce_process_product_meta', array($this, 'ets_woo_product_admin_qa') , 10, 1 );
 
-		// add new Tab. 
-		add_filter('woocommerce_product_data_tabs', array($this, 'ets_admin_answer_tabs'));
-		
-		// Add the script file in the drop & drag Question And Answer Listing.
-		add_action( 'admin_enqueue_scripts', array($this, 'ets_product_panels_scripts_ui' ));
-		
-		// Create the admin Url in Script Variable.	
-		add_action( 'admin_enqueue_scripts', array($this, 'ets_admin_woo_qa_scripts' ));
-		
-		// Tab content.
-		add_action( 'woocommerce_product_data_panels', array($this, 'ets_product_panels'));
+			//Add new Theam option in the admin Painel.
+			add_action('admin_menu', array($this, 'ets_product_q_a'));
+			 
+			//Add CSS file.
+			add_action( 'admin_enqueue_scripts',array($this, 'ets_woo_qa_admin_style'));  
 
-		// Save Product data in the admin Tab.
-		add_action( 'woocommerce_process_product_meta', array($this, 'ets_woo_product_admin_qa') , 10, 1 );
-		
-		// Save question order in DB.
-		add_action('wp_ajax_ets_qa_save_order', array($this, 'saveQaOrder'));
-		
-		// Add new Question And Answer.
-		add_action('wp_ajax_ets_add_new_qusetion_answer', array($this, 'addNewQuestionAnswer'));
+			// add new Tab. 
+			add_filter('woocommerce_product_data_tabs', array($this, 'ets_admin_answer_tabs'));
+			
+			// Add the script file in the drop & drag Question And Answer Listing.
+			add_action( 'admin_enqueue_scripts', array($this, 'ets_product_panels_scripts_ui' ));
+			
+			// Create the admin Url in Script Variable.	
+			add_action( 'admin_enqueue_scripts', array($this, 'ets_admin_woo_qa_scripts' ));
+			
+			// Tab content.
+			add_action( 'woocommerce_product_data_panels', array($this, 'ets_product_panels'));
+ 
+			// Save question order in DB.
+			add_action('wp_ajax_ets_qa_save_order', array($this, 'saveQaOrder'));
+			
+			// Add new Question And Answer.
+			add_action('wp_ajax_ets_add_new_qusetion_answer', array($this, 'addNewQuestionAnswer'));
 
-		// Delete the Question And Answer.
-		add_action('wp_ajax_etsdelete_qusetion_answer', array($this, 'delete_qusetion_answer'));
+			// Delete the Question And Answer.
+			add_action('wp_ajax_etsdelete_qusetion_answer', array($this, 'delete_qusetion_answer'));
+		}		 
 	}
 
 	/**
@@ -61,12 +68,12 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		$pagingType = get_option( 'ets_product_qa_paging_type');
 
 		if (isset($_POST['ets_load_more'])) {
-			$loadButton   =  isset($_POST['ets_load_more_active']) ? $_POST['ets_load_more_active'] : 'false' ; 
-			$lengthOfList = $_POST['ets_length_of_list']; 
-			$buttonName   = $_POST['ets_load_more_button_name'];  
-			$pagingType   = $_POST['paging_type'];
+			$loadButton   =  isset($_POST['ets_load_more_active']) ? intval($_POST['ets_load_more_active']) : 0 ; 
+			$lengthOfList = intval($_POST['ets_length_of_list']); 
+			$buttonName   = sanitize_text_field($_POST['ets_load_more_button_name']);  
+			$pagingType   = sanitize_text_field($_POST['paging_type']);
 			 
-			if($loadButton == 'true'){ 
+			if($loadButton == 1){ 
 				if(!empty($lengthOfList)){
 					update_option( 'ets_load_more_button', $loadButton );
 					update_option( 'ets_product_q_qa_list_length', $lengthOfList );
@@ -97,7 +104,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				<tr>
 					<td><h4><?php echo __('Load More :','ets_q_n_a'); ?></h4></td>
 					<td> 
-						<input type="checkbox" <?php if(($loadButton == 'true')) { echo $loadButton; ?> checked <?php }?> name="ets_load_more_active" value="true" >
+						<input type="checkbox" <?php if(($loadButton == 1)) { echo $loadButton; ?> checked <?php }?> name="ets_load_more_active" value="1" >
 					</td> 	
 				</tr> 
 				<tr>
@@ -109,7 +116,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					<td><input type="text" name="ets_load_more_button_name" value="<?php echo isset($buttonName) ? $buttonName : '';?>" width="50px" height="90px"></td>
 				</tr>
 				<tr>
-					<td><h4><?php echo __('Paging Type:','ets_q_n_a'); ?> </h4></td>
+					<td><h4><?php echo __('Layout:','ets_q_n_a'); ?> </h4></td>
 					<td><select name="paging_type">
 					    	<option value="normal" <?php if($pagingType == "normal") { ?> selected <?php }?>><?php echo __('Normal','ets_q_n_a');?></option>
 					    	<option value="accordion"  <?php if($pagingType == "accordion") { ?> selected <?php }?>><?php echo __('Accordion','ets_q_n_a');?></option>
@@ -126,7 +133,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	} 
 
  	/**
-	 * Tab
+	 * add menu tab
 	 */
  	public function ets_admin_answer_tabs( $tabs ){
  
@@ -307,20 +314,20 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		// to get data
 		$userId = $_POST['ets_user_id']; 
 		$userName = $_POST['ets_user_name'];
-		$question = $_POST['ets_first_question'];
-		$answer = $_POST['ets_first_answer'];
+		$question = sanitize_text_field($_POST['ets_first_question']);
+		$answer = sanitize_textarea_field($_POST['ets_first_answer']);
 		$questions = $_POST['ets_question'];
-		$answers = $_POST['ets_answer']; 
+		$answers = $_POST['ets_answer'];  
 		$date = $_POST['ets_date'];  
 		$newQuestion = $_POST['ets_new_question'];
 		$newAnswer = $_POST['ets_new_answer'];		
 		$newDate = date("d-M-Y");
 		$user = wp_get_current_user();  
 		$newUesrName = $user->user_login;
-		$newUserId = $user->ID; 
+		$newUserId = $user->ID;  
 		$userEmail = $_POST['ets_user_email'];		
 		$productTitle = $_POST['ets_product_title'];
-		$emp_text_answer = $_POST['ets_emp_text_answer'];
+		$empTextAnswer = $_POST['ets_emp_text_answer'];
 	
 		//Insert the first New Question
 		if(!empty($question)){
@@ -342,9 +349,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		if(!empty($newQuestion)){ 
 			foreach ( $newQuestion as $qkey => $q) { 
 				$productNewQas[$qkey] = array(   
-					"product_title" => $productTitle[$qkey],
-					"question" 	=> $newQuestion[$qkey],
-					"answer"	=> $newAnswer[$qkey], 
+					"product_title" => sanitize_text_field($productTitle[$qkey]),
+					"question" 	=> sanitize_text_field($newQuestion[$qkey]),
+					"answer"	=> sanitize_textarea_field($newAnswer[$qkey]), 
 					"date"		=> $newDate ,
 					"user_name"	=> $newUesrName,
 					"user_id"	=> $newUserId 
@@ -370,13 +377,13 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			foreach ( $questions as $qkey => $q) {  
 
 				$productQas[$qkey] = array(
-					"product_title" => $productTitle[$qkey],
-					"user_id"	=> $userId[$qkey],
-					"user_email" => $userEmail[$qkey],
-					"user_name"	=> $userName[$qkey],
-					"question" 	=> $q,
-					"answer"	=> $answers[$qkey], 
-					"date"		=> $date[$qkey]
+					"product_title" => sanitize_text_field($productTitle[$qkey]),
+					"user_id"	=> intval($userId[$qkey]),
+					"user_email" => sanitize_email($userEmail[$qkey]),
+					"user_name"	=> sanitize_text_field($userName[$qkey]),
+					"question" 	=> sanitize_text_field($q),
+					"answer"	=> sanitize_textarea_field($answers[$qkey]), 
+					"date"		=> sanitize_text_field($date[$qkey])
 				
 				);
 
@@ -385,27 +392,28 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				}  
 			} 	
 			// update meta for answer at user question.	   
-		 	     update_post_meta( $productId, 'ets_question_answer',  $productQas );  
+		 	update_post_meta( $productId, 'ets_question_answer',  $productQas );  
 		}
 
 		/********user mail from admin*********/ 
 
 		$etsGetQuestion = get_post_meta( $productId,'ets_question_answer', true ); 
 
-	    foreach ($emp_text_answer as $key => $value ) {
-	       	if( $value == 'empty_text' ) {
+	    foreach ($empTextAnswer as $key => $value ) {
+	       	if( sanitize_text_field($value) == 'empty_text' ) {
+
 	       		// get value for sending mail.
 		 		$productTitle = $etsGetQuestion[$key]['product_title'];
 		 		$to = $etsGetQuestion[$key]['user_email']; 
 		 		$answers = $etsGetQuestion[$key]['answer'];
-		 		$url = get_permalink( $productId);         // to get product url
-		  		$site_url = get_site_url();                // to get site url
-				$site_name = get_bloginfo('name');         // to set site name
+		 		$url = get_permalink( $productId); 
+		  		$site_url = get_site_url();       
+				$site_name = get_bloginfo('name');   
 		 		$subject = __("New Question: ",'ets_q_n_a') . get_bloginfo('name');
 				$message = "<a href='$site_url'>" . $site_name . "</a> added a answer on the <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
 				if(!empty($answers))
 				{	
-			    	wp_mail($to, $subject, $message);  // sending mail from site admin to user.
+			    	wp_mail($to, $subject, $message); 
 				}	
 			}		   		
 	    }
@@ -415,12 +423,25 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 * Change Order Q&A 
 	 */
 	public function saveQaOrder() { 
-		$productId = $_POST['product_id'];  
- 		$changedOrderQaList = $_POST['ets-qa-item']; 
-		$productQas = get_post_meta( $productId, 'ets_question_answer', true );
+		if(!wp_verify_nonce($_POST['changeOrderQa'],'ets-product-change-order-qa')){
+			
+			$response = array( 
+				'status'		=> 0,
+				'error'			=> __("Access not allowed.")
+			);
+			
+			echo json_encode($response);
+			die; 
+		}
+
+		$productId = intval($_POST['product_id']);  
+ 		$changedOrderQaList = $_POST['ets-qa-item'];  
+		$productQas = get_post_meta($productId,'ets_question_answer',true);
 		$newOrderQaList = array(); 
 		foreach($changedOrderQaList as $index) {
-		    $newOrderQaList[$index] = $productQas[$index];
+			if(intval($index)){
+		    	$newOrderQaList[$index] = $productQas[$index];
+			}
 		} 
 		update_post_meta( $productId, 'ets_question_answer',  $newOrderQaList );		 
 	}
@@ -429,23 +450,25 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 * Secipt File include.
 	 */
 	public function ets_admin_woo_qa_scripts() {
-		global $pagenow;
-
+		global $pagenow; 
 		if ( $pagenow == 'post.php' ) {
-			global $post;
-			//var_dump($post['id']);
-			//die();
+			global $post; 
+			$addNewQaNonce = wp_create_nonce('ets-product-add-new-qa');
+			$deleteQa = wp_create_nonce('ets-product-delete-qa');
+			$changeOrderQa = wp_create_nonce('ets-product-change-order-qa');
 		    wp_register_script(
 				'ets_woo_qa_admin_script',
 				ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_admin_script.js',
 				array('jquery')
 			); 
-	       // var_dump($post);
-			wp_enqueue_script( 'ets_woo_qa_admin_script' );
+	        wp_enqueue_script( 'ets_woo_qa_admin_script' );
 			
 			 	$script_params = array(
-					'admin_ajax' => admin_url('admin-ajax.php'),
-					'currentProdcutId' => $post->ID 
+					'admin_ajax' 		=> admin_url('admin-ajax.php'),
+					'currentProdcutId' 	=> $post->ID,
+					'addNewQaNonce' 	=> $addNewQaNonce,
+					'deleteQaNonce'		=> $deleteQa,
+					'changeOrderQa'		=> $changeOrderQa
 				);  
 		  	wp_localize_script( 'ets_woo_qa_admin_script', 'etsWooQaParams', $script_params ); 
 		}
@@ -467,8 +490,18 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 * Delete Q&A pare.
 	 */
 	public function delete_qusetion_answer(){
-		$questionIndex = $_POST['questionIndex'];
-		$productId = $_POST['prdId']; 
+		if(!wp_verify_nonce($_POST['deleteQaNonce'],'ets-product-delete-qa')){
+			
+			$response = array( 
+				'status'		=> 0,
+				'error'			=> __("Access not allowed.")
+			);
+			
+			echo json_encode($response);
+			die; 
+		}
+		$questionIndex = intval($_POST['questionIndex']);
+		$productId = intval($_POST['prdId']); 
 		$productQas = get_post_meta( $productId, 'ets_question_answer', true );
 		unset($productQas[$questionIndex]);
 		update_post_meta( $productId, 'ets_question_answer',  $productQas ); 
@@ -478,7 +511,20 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 * Add new Q&A field on click Add new Link
 	 */
 	public function addNewQuestionAnswer(){
-		$count = $_POST['count']; 
+		$addNewQaNonce = $_POST['addNewQaNonce'];
+		
+		if(!wp_verify_nonce($_POST['addNewQaNonce'],'ets-product-add-new-qa')){
+			
+			$response = array( 
+				'status'		=> 0,
+				'error'			=> "Access not allowed."
+			);
+			
+			echo json_encode($response);
+			die; 
+		}
+
+		$count = intval($_POST['count']); 
 		if(empty($count)){
 			$count = 0;
 		}
@@ -508,7 +554,6 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		);
 		echo json_encode($response);
 		die;  
-	}
-	 
+	} 
 } 	
 $etsWooProductAdminQuestionAnswer = new ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER(); 

@@ -50,17 +50,38 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	* Save The post Question.
 	*/
 	public function ets_post_qusetion_answer(){ 
-		$productId = $_POST['product_id']; 
-		$current_url = get_permalink( $productId );  
+		if(!wp_verify_nonce($_POST['add_qustion_nonce'],'ets-product-add-new-question')){
+
+			$response = array(	
+				'status' => 0, 
+				'message'	=> __('Access not allowed.','ets_q_n_a')  
+			); 
+			
+			echo json_encode($response);
+			die; 
+		}
+		if ( !is_user_logged_in() ) { 
+			echo json_encode( array( 
+						'status' => 0,
+						'message'	=> __('You are not logged in.','ets_q_n_a')
+					) 
+			);
+			die; 
+		}
+
 		$current_user = wp_get_current_user(); 
+		 
+		$productId = intval($_POST['product_id']); 
+		$current_url = get_permalink( $productId );  
+		
 		$userProfileUrl = get_author_posts_url($current_user);
 		$userEmail = $current_user->user_email;
 		$admin_email = get_option('admin_email'); 
-		$question = $_POST['question'];  
-		$etsCustomerId = $_POST['customer_id'];
-		$etsCustomerEmail = $_POST['usermail'];
-		$etsCustomerName = $_POST['customer_name']; 
-		$productTitle = $_POST['ets_Product_Title']; 
+		$question = sanitize_textarea_field($_POST['question']);  
+		$etsCustomerId = $current_user->ID; 
+		$etsCustomerEmail = $current_user->user_email;
+		$etsCustomerName = $current_user->user_login; 
+		$productTitle = sanitize_text_field($_POST['ets_Product_Title']); 
  		$date = date("d-M-Y"); 
  		if(!empty($question)){ 
 			$etsUserQusetion =  array(	
@@ -85,11 +106,12 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			} 
 		}	
 		
-		if($result == true){     
+		if( isset($result) ){     
 			//send email notification to admin 
 			$response = array(
+				'status' 		=> 1, 
 				'productId' 	=> $productId,
-				'message' 		=> __("Question submit successfully",'ets_q_n_a'),
+				'message' 		=> __("Question submitted successfully.",'ets_q_n_a'),
 				'ets_get_question_data'	=> $result 
 			);   
 			echo json_encode($response);
@@ -99,12 +121,13 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			
 			$response = array(	
 				'status' => 0, 
-				"message"	=> "Question not submit.",  
+				"message"	=> __("Please enter your question.", 'ets_q_n_a'),  
 			); 
 			echo json_encode($response);
 			
 		}
-		if($result == true) {
+
+		if( isset($result) ) {
 			try{  
 				$message = "<a href='$userProfileUrl'>" . $etsCustomerName . "</a> added a question on the <a href='$current_url'> " . $productTitle."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $question."</div>";  
 				$to = $admin_email;
@@ -136,20 +159,17 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		$user = wp_get_current_user();
 		$productQaLength = get_option('ets_product_q_qa_list_length');   
 		$current_user = $user->exists();  
+
 		if( $current_user == true ){  
 			$uesrName = $user->user_login;
 			$userId = $user->ID; 
 			$uesrEmail = $user->user_email;
-
-
 		 	?>
 			<form action="#" method="post"  id="ets-qus-form" name="form">  
 				<textarea id="myInput" cols="45" rows="3" id="name" class="ets-qa-textarea"   name="question" value="" placeholder="<?php echo __('Enter your question here...','ets_q_n_a') ?>" height= "75px" ></textarea>
 				<input type="hidden" id="useremail" class="productId" name="usermail" value="<?php echo $uesrEmail ?>">
 				<input type="hidden" id="custId" class="productId" name="product_id" value="<?php echo $productId ?>">
-				<input type="hidden" id="productlength" class="productlength" name="Product_Qa_Length" value="<?php echo $productQaLength ?>">
-				<input type="hidden" id="custId" name="customer_id" value="<?php echo $userId ?>">
-				<input type="hidden" id="custId" name="customer_name" value="<?php echo $uesrName ?>"> 
+				<input type="hidden" id="productlength" class="productlength" name="Product_Qa_Length" value="<?php echo $productQaLength ?>">  
 				<input type="hidden" id="producttitle" name="ets_Product_Title" value="<?php echo $productTitle ?>">
 				<div class="ets-display-message"><p></p></div>
 				<div class="ets-dis-message-error"><p></p></div>
@@ -159,17 +179,15 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			<?php 	
 		} else { ?>
 
-				<form action="#" method="post"  id="ets-qus-form" name="form">   
+			<form action="#" method="post"  id="ets-qus-form" name="form">
 				<input type="hidden" id="custId" class="productId" name="product_id" value="<?php echo $productId ?>">
-				<input type="hidden" id="productlength" class="productlength" name="Product_Qa_Length" value="<?php echo $productQaLength ?>">
-				<input type="hidden" id="custId" name="customer_id" value="<?php echo$userId ?>">
-				<input type="hidden" id="custId" name="customer_name" value="<?php echo $uesrName ?>"> 
+				<input type="hidden" id="productlength" class="productlength" name="Product_Qa_Length" value="<?php echo $productQaLength ?>">  
 				<input type="hidden" id="producttitle" name="ets_Product_Title" value="<?php echo $productTitle ?>"> 
 			</form>
 			<div id="ets_product_qa_length"><p></p></div> 
-				<a href="<?php echo 'http://localhost/wordpress/wp-login.php' ?>" class="ets-load-more">
-				<?php echo _e('Please login to post questions.', 'ets_q_n_a'); ?>
-				</a> 
+			<a href="<?php echo 'http://localhost/wordpress/wp-login.php' ?>" class="ets-load-more">
+				<?php echo __('Please login to post questions.', 'ets_q_n_a');?>
+			</a> 
 			<?php  
 			}  
 			$loadMoreButtonName = get_option('ets_load_more_button_name');
@@ -181,7 +199,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				end( $etsGetQuestion);
 				$keyData =  max(array_keys($etsGetQuestion));
             } 
-			if($loadMoreButton == "true") { 
+			if($loadMoreButton == 1) { 
 				if(empty($loadMoreButtonName)){
 					$loadMoreButtonName = __("Load More",'ets_q_n_a');
 					update_option( 'ets_load_more_button_name', $loadMoreButtonName );
@@ -324,8 +342,12 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	* Load More Button Post Data Using Ajax
 	*/
 	public function ets_product_qa_load_more(){ 
-		$productId = $_GET['product_id']; 
-		$offsetdata = $_GET['offset']; 
+		if(!wp_verify_nonce($_GET['load_qa_nonce'],'ets-product-load-more-question')){ 
+			echo json_encode(array('error' => "Access not allowed."));
+			die;
+		}
+		$productId = intval($_GET['product_id']); 
+		$offsetdata = intval($_GET['offset']); 
 		$loadMoreButtonName = get_option('ets_load_more_button_name');
 		$pagingType = get_option('ets_product_qa_paging_type' ); 
 		$productQaLength = get_option('ets_product_q_qa_list_length');  
@@ -429,9 +451,14 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	*/
 	public function ets_woo_qa_scripts() {
 		wp_enqueue_script( 'ets_woo_qa_script_js', ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_script.js',array( 'jquery' ),false,true  );
+			$addQusNonce = wp_create_nonce('ets-product-add-new-question');
+			$loadQaNonce = wp_create_nonce('ets-product-load-more-question');
 
 			$script_params = array(
-				'admin_ajax' => admin_url('admin-ajax.php')
+				'admin_ajax'		 => admin_url('admin-ajax.php'),
+				'add_qustion_nonce'	 => $addQusNonce,
+				'load_qa_nonce' 	 => $loadQaNonce
+
 			);  
 
 	  	wp_localize_script( 'ets_woo_qa_script_js', 'etsWooQaParams', $script_params ); 

@@ -7,7 +7,7 @@ jQuery(document).ready(function(){
 	        jQuery.ajax({
 	            url: etsWooQaParams.admin_ajax,
 	            type: 'POST',   
-				data: 'action=ets_qa_save_order&product_id=' + etsWooQaParams.currentProdcutId + '&' + sortedData,
+				data: 'action=ets_qa_save_order&product_id=' + etsWooQaParams.currentProdcutId + '&' + sortedData + "&changeOrderQa=" + etsWooQaParams.changeOrderQa,
 	        });
 	    }
 	});
@@ -18,12 +18,11 @@ jQuery(document).ready(function(){
     	if(conformation == true) { 
 			let questionNumber = jQuery(this).data('questionkey');
 			let LiData = jQuery("li.ets-qa-item").serialize(); 
-			let prdId = etsWooQaParams.currentProdcutId;
-
+			let prdId = etsWooQaParams.currentProdcutId; 
 			jQuery.ajax({ 
 				url: etsWooQaParams.admin_ajax,
 				type: 'POST',  
-				data:'action=etsdelete_qusetion_answer&questionIndex=' + questionNumber +'&prdId='+ prdId,
+				data:'action=etsdelete_qusetion_answer&questionIndex=' + questionNumber +'&prdId='+ prdId + '&deleteQaNonce=' + etsWooQaParams.deleteQaNonce,
 				success: function(date) {  
 	            	jQuery("#ets-qa-item-" + questionNumber).remove();
 	            }
@@ -43,7 +42,7 @@ jQuery(document).ready(function(){
 				url: etsWooQaParams.admin_ajax,
 				type: 'POST',  
 				dataType: "JSON",  
-				data:'action=ets_add_new_qusetion_answer&count=' + count,
+				data:'action=ets_add_new_qusetion_answer&count=' + count + '&addNewQaNonce=' + etsWooQaParams.addNewQaNonce,
 				success: function(res) {  
 					jQuery('.ets-new-qa-field').append(res.htmlData);  
 					count = res.count; 
