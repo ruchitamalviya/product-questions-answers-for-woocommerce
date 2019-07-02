@@ -8,27 +8,27 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	public function __construct() {
 	 
 		// Create the new Tabe Add Question Field
-		add_filter( 'woocommerce_product_tabs',  		 	array($this, 'ets_question_tab'));
+		add_filter( 'woocommerce_product_tabs',  		 	array($this, 'etsQuestionTab'));
 		
-		add_action( 'wp_ajax_ets_post_qusetion_answer',		array($this, 'ets_post_qusetion_answer'));	
+		add_action( 'wp_ajax_ets_post_qusetion_answer',		array($this, 'etsPostQa'));	
 
 		// Load The Q & A on click Load More Button
-		add_action( 'wp_ajax_ets_product_qa_load_more',		array($this, 'ets_product_qa_load_more'));
+		add_action( 'wp_ajax_ets_product_qa_load_more',		array($this, 'etsProductQaLoadMore'));
 
 		// without login
-		add_action( 'wp_ajax_nopriv_ets_product_qa_load_more',		array($this, 'ets_product_qa_load_more'));
+		add_action( 'wp_ajax_nopriv_ets_product_qa_load_more',		array($this, 'etsProductQaLoadMore'));
 
 		//variable Creation js
-		add_action( 'wp_enqueue_scripts',array($this, 'ets_woo_qa_scripts' ));
+		add_action( 'wp_enqueue_scripts',array($this, 'etsWooQaScripts' ));
 
 		//Add CSS file
-		add_action( 'wp_enqueue_scripts',array($this, 'ets_woo_qa_style'));	 
+		add_action( 'wp_enqueue_scripts',array($this, 'etsWooQaStyle'));	 
 
 		//SMTP mail Hook
 		add_action('phpmailer_init',array($this, 'configure_smtp') );
 
 		//Mail Content Type Html
-		add_filter( 'wp_mail_content_type',array($this, 'ets_set_html_content_type'));
+		add_filter( 'wp_mail_content_type',array($this, 'etsSetHtmlContentType'));
 
 
 	}
@@ -36,7 +36,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	/**
 	*Create the new Tabe Add Question Field
 	*/ 
-	public function ets_question_tab( $tabs ) { 
+	public function etsQuestionTab( $tabs ) { 
 	     
 	    $tabs['ask'] = array(
 		    'title'     =>  __( __("Q&A",'ets_q_n_a'), 'woocommerce'),
@@ -49,7 +49,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	/**
 	* Save The post Question.
 	*/
-	public function ets_post_qusetion_answer(){ 
+	public function etsPostQa(){ 
 		if(!wp_verify_nonce($_POST['add_qustion_nonce'],'ets-product-add-new-question')){
 
 			$response = array(	
@@ -69,11 +69,9 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			die; 
 		}
 
-		$current_user = wp_get_current_user(); 
-		 
+		$current_user = wp_get_current_user();  
 		$productId = intval($_POST['product_id']); 
-		$current_url = get_permalink( $productId );  
-		
+		$current_url = get_permalink( $productId );   
 		$userProfileUrl = get_author_posts_url($current_user);
 		$userEmail = $current_user->user_email;
 		$admin_email = get_option('admin_email'); 
@@ -145,7 +143,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	/**
 	* Question Mail Html
 	*/
-	public function ets_set_html_content_type() {
+	public function ets_St_Hml_Cntent_Tpe() {
 		return "text/html";
 	}
 	
@@ -159,6 +157,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		$user = wp_get_current_user();
 		$productQaLength = get_option('ets_product_q_qa_list_length');   
 		$current_user = $user->exists();  
+		$site_url = get_site_url();
 
 		if( $current_user == true ){  
 			$uesrName = $user->user_login;
@@ -185,7 +184,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				<input type="hidden" id="producttitle" name="ets_Product_Title" value="<?php echo $productTitle ?>"> 
 			</form>
 			<div id="ets_product_qa_length"><p></p></div> 
-			<a href="<?php echo 'http://localhost/wordpress/wp-login.php' ?>" class="ets-load-more">
+			<a href="<?php echo $site_url.'/wp-login.php' ?>" class="ets-load-more">
 				<?php echo __('Please login to post questions.', 'ets_q_n_a');?>
 			</a> 
 			<?php  
@@ -341,7 +340,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	/**
 	* Load More Button Post Data Using Ajax
 	*/
-	public function ets_product_qa_load_more(){ 
+	public function etsProductQaLoadMore(){ 
 		if(!wp_verify_nonce($_GET['load_qa_nonce'],'ets-product-load-more-question')){ 
 			echo json_encode(array('error' => "Access not allowed."));
 			die;
@@ -449,7 +448,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	/**
 	*  JS Variables
 	*/
-	public function ets_woo_qa_scripts() {
+	public function etsWooQaScripts() {
 		wp_enqueue_script( 'ets_woo_qa_script_js', ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_script.js',array( 'jquery' ),false,true  );
 			$addQusNonce = wp_create_nonce('ets-product-add-new-question');
 			$loadQaNonce = wp_create_nonce('ets-product-load-more-question');
@@ -464,7 +463,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	  	wp_localize_script( 'ets_woo_qa_script_js', 'etsWooQaParams', $script_params ); 
 	}
 	
-	public function ets_woo_qa_style() {
+	public function etsWooQaStyle() {
 		wp_register_style(
 		    'ets_woo_qa_style_css',
 		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css'

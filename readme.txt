@@ -1,9 +1,10 @@
-=== Plugin Name ===
+=== Product Questions & Answers for WooCommerce ===
 Plugin Name: Product Questions & Answers for WooCommerce
-Contributors: Ravi Soni
+Contributors: expresstechsoftware
 Author URI: https://www.expresstechsoftwares.com
 Author: Ravi Soni
 Tags: WooCommerce, product questions, product question answer, ask question about woocommerce products, product based questions woocommerce, questions on product details page, amazon like product questions
+Requires PHP: 5.2.4
 Requires at least: 4.0.0
 Tested up to: 5.2.1
 Stable tag: 5.2.1
