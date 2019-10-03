@@ -55,7 +55,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 */
 	public function etsErrorNotification() { 
 		$class = 'notice notice-error';
-		$message = __( 'Access not allowed.', 'ets_q_n_a' );
+		$message = __( 'Access not allowed', 'ets_q_n_a' ).'.';
 
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) ); 
 	} 
@@ -119,22 +119,22 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			 	
 			<table>
 				<tr>
-					<td><h4><?php echo __('Load More :','ets_q_n_a'); ?></h4></td>
+					<td><h4><?php echo __('Load More','ets_q_n_a'); ?> : </h4></td>
 					<td> 
 						 <?php wp_nonce_field( 'etsLoadMoreQa', 'ets_load_more_button' ); ?>
 						<input type="checkbox" <?php if(($loadButton == 1)) { echo $loadButton; ?> checked <?php }?> name="ets_load_more_active" value="1" >
 					</td> 	
 				</tr> 
 				<tr>
-					<td><h4><?php echo __('Page Size:','ets_q_n_a'); ?></h4></td>
+					<td><h4><?php echo __('Page Size','ets_q_n_a'); ?> : </h4></td>
 					<td><input type="number" name="ets_length_of_list" value="<?php echo isset($lengthOfList) ? $lengthOfList : '';?>"  min="1"  ></td>
 				</tr> 
 				<tr>
-					<td><h4><?php echo __('Paging Button Name: ','ets_q_n_a'); ?></h4></td>
+					<td><h4><?php echo __('Paging Button Name','ets_q_n_a'); ?> : </h4></td>
 					<td><input type="text" name="ets_load_more_button_name" value="<?php echo isset($buttonName) ? $buttonName : '';?>" width="50px" height="90px"></td>
 				</tr>
 				<tr>
-					<td><h4><?php echo __('Layout:','ets_q_n_a'); ?> </h4></td>
+					<td><h4><?php echo __('Layout','ets_q_n_a'); ?> : </h4></td>
 					<td><select name="paging_type">
 					    	<option value="normal" <?php if($pagingType == "normal") { ?> selected <?php }?>><?php echo __('Normal','ets_q_n_a');?></option>
 					    	<option value="accordion"  <?php if($pagingType == "accordion") { ?> selected <?php }?>><?php echo __('Accordion','ets_q_n_a');?></option>
@@ -156,7 +156,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
  	public function etsAdminQaTab( $tabs ){
  
 		$tabs['admin_answer'] = array(
-			'label'    		=> 'Q & A',
+			'label'    		=> __('Q & A','ets_q_n_a'),
 			'target'   		=> 'ets_product_data', 
 			'priority' 		=> 100,  
 			'id'			=> 'ets_question',
@@ -248,7 +248,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'    	  => "ets_question[$key]",  
 								'name'		  => "ets_question[$key]",
 								'value'       => $value['question'],
-								'label'       => __('Question :','ets_q_n_a')  
+								'label'       => __('Question','ets_q_n_a').' : '  
 							) 
 						);
 						woocommerce_wp_textarea_input( 
@@ -256,7 +256,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'		  => "ets_answer[$key]",
 								'name'		  => "ets_answer[$key]",
 								'value'       =>  $value['answer'], 
-								'label'       => __('Answer :','ets_q_n_a') 
+								'label'       => __('Answer','ets_q_n_a').' : ' 
 							) 
 						);	
 						
@@ -296,7 +296,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								array(  
 									'name'		  => 'ets_first_question',
 									'value'       => '',
-									'label'       => __('Question :','ets_q_n_a'),
+									'label'       => __('Question','ets_q_n_a').' : ',
 									'desc_tip'    => true, 
 									'id'		  => 'ets_question_data'	 
 								) 
@@ -305,7 +305,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								array( 
 									'name'		  => 'ets_first_answer',
 									'value'       =>  '',
-									'label'       => __('Answer :','ets_q_n_a'),
+									'label'       => __('Answer','ets_q_n_a').' : ',
 									'desc_tip'    => true, 	
 									'id'		  => 'ets_answer_data' 
 								) 
@@ -315,10 +315,10 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					</li> 
 					<?php 
 				}   ?>
-		 		<li class="ets-new-qa-field"></li>  
+		 		<li class="ets-new-qa-field ets-qa-item"></li>  
 		 		</ul> 
 		 		<input type="hidden" name="ets-new-question-Answer-count" id="ets-new-question-Answer-count" value=""> 
-				<a href="#" type="submit" name="ets-add-new-qa" class="ets-add-new-qa "> <?php echo __('+Add New',"ets_q_n_a"); ?></a>   
+				<a href="#" type="submit" name="ets-add-new-qa" class="ets-add-new-qa ">+<?php echo __('Add New',"ets_q_n_a"); ?></a>   
 				
 			</div>
 		</div> 	
@@ -439,7 +439,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		 		$url = get_permalink( $productId); 
 		  		$site_url = get_site_url();       
 				$site_name = get_bloginfo('name');   
-		 		$subject = __("New Question: ",'ets_q_n_a') . get_bloginfo('name');
+		 		$subject = __("New Question",'ets_q_n_a'). ' : ' . get_bloginfo('name');
 				$message = "<a href='$site_url'>" . $site_name . "</a> added a answer on the <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
 				if(!empty($answers)){	
 			    	wp_mail($to, $subject, $message); 
@@ -456,7 +456,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			
 			$response = array( 
 				'status'		=> 0,
-				'error'			=> __("Access not allowed.")
+				'error'			=> __("Access not allowed").'.'
 			);
 			
 			echo json_encode($response);
@@ -525,7 +525,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			
 			$response = array( 
 				'status'		=> 0,
-				'error'			=> __("Access not allowed.")
+				'error'			=> __("Access not allowed").'.'
 			);
 			
 			echo json_encode($response);
@@ -546,7 +546,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			
 			$response = array( 
 				'status'		=> 0,
-				'error'			=> "Access not allowed."
+				'error'			=> __("Access not allowed",'ets_q_n_a').'.'
 			);
 			
 			echo json_encode($response);
@@ -562,7 +562,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array(  
 				'name'		  => "ets_new_question[$count]",
 				'value'       => '',
-				'label'       => __('Question :','ets_q_n_a'),
+				'label'       => __('Question','ets_q_n_a')." : ",
 				'desc_tip'    => true,  	 
 			) 
 		);
@@ -571,7 +571,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array( 
 				'name'		  => "ets_new_answer[$count]",
 				'value'       =>  '', 
-				'label'       => __('Answer :','ets_q_n_a'),
+				'label'       => __('Answer','ets_q_n_a').' : ',
 				'desc_tip'    => true,
 			) 
 		); 
