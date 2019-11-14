@@ -5,7 +5,6 @@ Adds the ability to add questions under product for the site customers and admin
 This is listed under the Wordpress repository: https://wordpress.org/plugins/product-questions-answers-for-woocommerce/
 
 ## Description
-
 This plugin allows the customers to ask questions about each product in your store and admin to answer/update/delete them and add new question from the backend product page.
 You can also drag and drop questions to change their order of appearance.
 
@@ -17,5 +16,4 @@ You can also drag and drop questions to change their order of appearance.
 4. Two question-answer layouts available for front-end: Normal and Accordion.
 
 ## Configuration
-
 No configuration needed! just install and it will start working from there, you can change the settings at any time though.
