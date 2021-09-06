@@ -11,41 +11,41 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		if(current_user_can('shop_manager') || current_user_can('administrator')){ 
 			
 			// Save Product data in the admin Tab.
-			add_action( 'woocommerce_process_product_meta', array($this, 'etsWooProductAdminQa') , 10, 1 );
+			add_action( 'woocommerce_process_product_meta', array($this, 'admin_qa_save') , 10, 1 );
 
 			//Add new Theam option in the admin Painel.
-			add_action('admin_menu', array($this, 'etsProductQa'));
+			add_action('admin_menu', array($this, 'admin_menu_product_qa'));
 			 
 			//Add CSS file.
-			add_action( 'admin_enqueue_scripts',array($this, 'etsWooQaAdminStyle'));  
+			add_action( 'admin_enqueue_scripts',array($this, 'admin_style'));  
 
 			// add new Tab. 
-			add_filter('woocommerce_product_data_tabs', array($this, 'etsAdminQaTab'));
+			add_filter('woocommerce_product_data_tabs', array($this, 'product_tab_admin_qa'));
 			
 			// Add the script file in the drop & drag Question And Answer Listing.
-			add_action( 'admin_enqueue_scripts', array($this, 'etsProductPanelsScriptsUi' ));
+			add_action( 'admin_enqueue_scripts', array($this, 'product_panels_scripts_ui' ));
 			
 			// Create the admin Url in Script Variable.	
-			add_action( 'admin_enqueue_scripts', array($this, 'etsAdminWooQaScripts' ));
+			add_action( 'admin_enqueue_scripts', array($this, 'admin_woo_qa_script' ));
 			
 			// Tab content.
-			add_action( 'woocommerce_product_data_panels', array($this, 'etsProductPanels'));
+			add_action( 'woocommerce_product_data_panels', array($this, 'product_panels'));
  
 			// Save question order in DB.
-			add_action('wp_ajax_ets_qa_save_order', array($this, 'saveQaOrder'));
+			add_action('wp_ajax_ets_qa_save_order', array($this, 'qa_order_save'));
 			
 			// Add new Question And Answer.
-			add_action('wp_ajax_ets_add_new_qusetion_answer', array($this, 'addNewQuestionAnswer'));
+			add_action('wp_ajax_ets_add_new_qusetion_answer', array($this, 'add_new_qa_inputs'));
 
 			// Delete the Question And Answer.
-			add_action('wp_ajax_etsdelete_qusetion_answer', array($this, 'deleteQusetionAnswer'));
+			add_action('wp_ajax_etsdelete_qusetion_answer', array($this, 'delete_qa'));
 		}		 
 	}
 
 	/**
 	 * Add new Theam option in the admin Panel
 	 */ 
-	public function etsProductQa(){
+	public function admin_menu_product_qa(){
 		add_menu_page(__('Products Q & A','ets_q_n_a'), __('Products Q & A','ets_q_n_a'), 'manage_options', 'theme-options', array($this, 'etsLoadMoreQa'), 'dashicons-info ',59);
 	}
 
@@ -153,7 +153,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
  	/**
 	 * add menu tab
 	 */
- 	public function etsAdminQaTab( $tabs ){
+ 	public function product_tab_admin_qa( $tabs ){
  
 		$tabs['admin_answer'] = array(
 			'label'    		=> __('Q & A','ets_q_n_a'),
@@ -168,7 +168,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/**
 	 * Include Drag and Drop Script jquery-ui
 	 */
-  	public function etsProductPanelsScriptsUi(){    
+  	public function product_panels_scripts_ui(){    
 		wp_register_script(
 			'jquery-ui-sortable', 
 			array( 'jquery' )
@@ -178,7 +178,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/*
 	 * Tab content
 	 */
-	public function etsProductPanels(){ 
+	public function product_panels(){ 
 		?>
 		<div id="ets_product_data" class="panel woocommerce_options_panel hidden"> 
 			<div id="ets_product_detail"> <ul id="sortable">
@@ -328,7 +328,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/**
 	 * Save Product data in the admin Tab
 	 */ 
-	public function etsWooProductAdminQa( $productId ){   
+	public function admin_qa_save( $productId ){
 		$userId = isset($_POST['ets_user_id']) ? (is_array($_POST['ets_user_id']) ? array_map('intval',$_POST['ets_user_id']) : '') : '';  
 
 		$userName = isset($_POST['ets_user_name']) ? (is_array($_POST['ets_user_name']) ? array_map('sanitize_text_field' , $_POST['ets_user_name']) : '') : ''; 
@@ -451,7 +451,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/**
 	 * Change Order Q&A 
 	 */
-	public function saveQaOrder() { 
+	public function qa_order_save() { 
 		if(!wp_verify_nonce($_POST['changeOrderQa'],'ets-product-change-order-qa')){
 			
 			$response = array( 
@@ -480,7 +480,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/**
 	 * Secipt File include.
 	 */
-	public function etsAdminWooQaScripts() {
+	public function admin_woo_qa_script() {
 		global $pagenow; 
 		if ( $pagenow == 'post.php' ) {
 			global $post; 
@@ -508,7 +508,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/**
 	 * Include custome style sheet
 	 */
-	public function etsWooQaAdminStyle() {
+	public function admin_style() {
 		wp_register_style(
 		    'ets_woo_qa_style_css',
 		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css'
@@ -520,7 +520,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/**
 	 * Delete Q&A pare.
 	 */
-	public function deleteQusetionAnswer(){
+	public function delete_qa(){
 		if(!wp_verify_nonce($_POST['deleteQaNonce'],'ets-product-delete-qa')){
 			
 			$response = array( 
@@ -541,7 +541,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/**
 	 * Add new Q&A field on click Add new Link
 	 */
-	public function addNewQuestionAnswer(){
+	public function add_new_qa_inputs(){
 		if(!wp_verify_nonce($_POST['addNewQaNonce'],'ets-product-add-new-qa')){
 			
 			$response = array( 
