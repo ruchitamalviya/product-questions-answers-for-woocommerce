@@ -328,7 +328,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	/**
 	 * Save Product data in the admin Tab
 	 */ 
-	public function admin_qa_save( $productId ){
+	public function admin_qa_save( $productId ){ 
 		$userId = isset($_POST['ets_user_id']) ? (is_array($_POST['ets_user_id']) ? array_map('intval',$_POST['ets_user_id']) : '') : '';  
 
 		$userName = isset($_POST['ets_user_name']) ? (is_array($_POST['ets_user_name']) ? array_map('sanitize_text_field' , $_POST['ets_user_name']) : '') : ''; 
