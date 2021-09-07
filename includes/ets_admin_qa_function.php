@@ -186,6 +186,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				global $post; 
 				$productId = $post->ID; 
 				$etsGetQuestion = get_post_meta( $productId,'ets_question_answer', true ); 
+
 				if(!empty($etsGetQuestion)){   
 					foreach ($etsGetQuestion as $key => $value) {  
 						//var_dump($etsGetQuestion);
@@ -210,7 +211,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 
 							) 
 						);
-						if(!empty($value['user_email'])){
+						 
 						woocommerce_wp_hidden_input( 
 							array(  
 								'id'    	  => "ets_user_email[$key]",
@@ -220,7 +221,6 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 
 							) 
 						);
-						}
 						
 						woocommerce_wp_hidden_input( 
 							array(  
@@ -329,6 +329,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 * Save Product data in the admin Tab
 	 */ 
 	public function admin_qa_save( $productId ){ 
+	 	 
 		$userId = isset($_POST['ets_user_id']) ? (is_array($_POST['ets_user_id']) ? array_map('intval',$_POST['ets_user_id']) : '') : '';  
 
 		$userName = isset($_POST['ets_user_name']) ? (is_array($_POST['ets_user_name']) ? array_map('sanitize_text_field' , $_POST['ets_user_name']) : '') : ''; 
@@ -341,22 +342,25 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		
 		$newQuestion = isset($_POST['ets_new_question']) ? (is_array($_POST['ets_new_question']) ? array_map('sanitize_text_field' , $_POST['ets_new_question']) : '') : '';
 		
-		$newAnswer = isset($_POST['ets_new_answer']) ? (is_array($_POST['ets_new_answer']) ? array_map('sanitize_textarea_field' , $_POST['ets_new_answer']) : '') : '';		 
-	
-		$userEmail = isset($_POST['ets_user_email']) ? (is_array($_POST['ets_user_email']) ? array_map('' , $_POST['
-			ets_user_email']) : '') : '';		
+		$newAnswer = isset($_POST['ets_new_answer']) ? (is_array($_POST['ets_new_answer']) ? array_map('sanitize_textarea_field' , $_POST['ets_new_answer']) : '') : '';	
 		
 		$productTitle = isset($_POST['ets_product_title']) ? (is_array($_POST['ets_product_title']) ? array_map('sanitize_text_field' , $_POST['ets_product_title']) : '') : '' ;
 		
 		$empTextAnswer = isset($_POST['ets_emp_text_answer']) ? (is_array($_POST['ets_emp_text_answer']) ? array_map('sanitize_textarea_field' , $_POST['ets_emp_text_answer']) : '') : '';
+
+		$userEmail = isset($_POST['ets_user_email']) && $_POST['ets_user_email'] && is_array($_POST['ets_user_email']) ? array_map('sanitize_email', $_POST['ets_user_email']) : '';
+		 
 		
 		$newDate = date("d-M-Y");
 		$user = wp_get_current_user();  
 		$newUesrName = $user->user_login;
-		$newUserId = $user->ID;  
-		$question = sanitize_text_field($_POST['ets_first_question']);
-		$answer = sanitize_textarea_field($_POST['ets_first_answer']);
+		$newUserId = $user->ID;
+		$newUserEmail = $user->user_email;
+		$question = isset($_POST['ets_first_question']) && $_POST['ets_first_question'] ? sanitize_text_field($_POST['ets_first_question']) : '';
+		$answer = isset($_POST['ets_first_answer']) && $_POST['ets_first_answer'] ? sanitize_textarea_field($_POST['ets_first_answer']) : '';
 		$prdTitle = get_the_title();
+
+		$before_save = get_post_meta( $productId,'ets_question_answer', true );
 	
 		//Insert the first New Question
 		if(!empty($question)){ 
@@ -368,6 +372,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				"answer"	=> $answer,
 				"date"		=> $newDate,
 				"user_name"	=> $newUesrName,
+				"user_email"=> $newUserEmail,
 				"user_id"	=> $newUserId 
 			); 
 			update_post_meta( $productId, 'ets_question_answer',  $productFirstQa );
@@ -385,6 +390,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					"answer"	=> $newAnswer[$qkey], 
 					"date"		=> $newDate ,
 					"user_name"	=> $newUesrName,
+					"user_email"=> $newUserEmail,
 					"user_id"	=> $newUserId 
 				);
 				
@@ -428,24 +434,25 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		}
 
 		//user mail from admin
-		$etsGetQuestion = get_post_meta( $productId,'ets_question_answer', true ); 
+		$after_save = get_post_meta( $productId,'ets_question_answer', true );
 
-	    foreach ($empTextAnswer as $key => $value ) {
-	       	if( sanitize_text_field($value) == 'empty_text' ) {
-	       		// get value for sending mail.
-		 		$productTitle = $etsGetQuestion[$key]['product_title'];
-		 		$to = $etsGetQuestion[$key]['user_email']; 
-		 		$answers = $etsGetQuestion[$key]['answer'];
-		 		$url = get_permalink( $productId); 
-		  		$site_url = get_site_url();       
-				$site_name = get_bloginfo('name');   
-		 		$subject = __("New Question",'ets_q_n_a'). ' : ' . get_bloginfo('name');
-				$message = "<a href='$site_url'>" . $site_name . "</a> added a answer on the <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
-				if(!empty($answers)){	
-			    	wp_mail($to, $subject, $message); 
-				}	
-			}		   		
-	    }
+		if ($after_save) {
+			foreach ($after_save as $key => $value) {
+				if ( !empty($value['answer']) && !empty($value['user_email']) && ($value['answer'] != $before_save[$key]['answer'] ) ) 
+				{
+					$to = $value['user_email'];
+					$productTitle = $value['product_title'];
+					$answers = $value['answer'];
+					$url = get_permalink( $productId);
+					$site_url = get_site_url();       
+					$site_name = get_bloginfo('name');   
+			 		$subject = __("New Question",'ets_q_n_a'). ' : ' . get_bloginfo('name');
+			 		$message = "<a href='$site_url'>" . $site_name . "</a> added a answer on the <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
+				    $res = wp_mail($to, $subject, $message);
+				     
+				}
+			}
+		}
 	} 
 
 	/**
