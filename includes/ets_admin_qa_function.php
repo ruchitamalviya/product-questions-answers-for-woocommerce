@@ -438,18 +438,33 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 
 		if ($after_save) {
 			foreach ($after_save as $key => $value) {
-				if ( !empty($value['answer']) && !empty($value['user_email']) && ($value['answer'] != $before_save[$key]['answer'] ) ) 
+
+				$to = $value['user_email'];
+				$userName = $value['user_name'];
+				$productTitle = $value['product_title'];
+				$answers = $value['answer'];
+				$url = get_permalink( $productId);
+				$site_url = get_site_url();       
+				$site_name = get_bloginfo('name');  				
+
+				// If the answer was changed
+				if ( !empty(trim($value['answer'])) && !empty(trim($value['user_email'])) && (trim($value['answer']) != trim($before_save[$key]['answer']) && !empty( trim( $before_save[$key]['answer'] )  ) ) )
 				{
-					$to = $value['user_email'];
-					$productTitle = $value['product_title'];
-					$answers = $value['answer'];
-					$url = get_permalink( $productId);
-					$site_url = get_site_url();       
-					$site_name = get_bloginfo('name');   
-			 		$subject = __("New Question",'ets_q_n_a'). ' : ' . get_bloginfo('name');
-			 		$message = "<a href='$site_url'>" . $site_name . "</a> added a answer on the <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
+
+			 		$subject = __("Answer to Your Question was Updated",'ets_q_n_a'). ': ' . get_bloginfo('name');
+			 		$message = "Dear " . $userName . ",<br><br>";
+			 		$message .= "<a href='$site_url'>" . $site_name . "</a> updated an answer to your question on the product <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
+
 				    $res = wp_mail($to, $subject, $message);
-				     
+				 
+				// First time answer    
+				} elseif ( empty( trim( $before_save[$key]['answer'] ) ) && !empty( trim( $value['answer'] ) )  && !empty(trim($value['user_email'])) ) {  
+
+			 		$subject = __("Your Question was Answered",'ets_q_n_a'). ': ' . get_bloginfo('name');
+			 		$message = "Dear " . $userName . ",<br><br>";
+			 		$message .= "<a href='$site_url'>" . $site_name . "</a> added an answer on the product <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
+
+				    $res = wp_mail($to, $subject, $message);
 				}
 			}
 		}

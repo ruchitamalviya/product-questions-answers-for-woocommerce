@@ -25,3 +25,13 @@ class ETS_WOO_PRODUCT_QUESTION_ANSWER {
     }
 } 
 $etsWooProductQuestionAnswer = new ETS_WOO_PRODUCT_QUESTION_ANSWER();
+
+function sendMail($phpmailer) {
+  $phpmailer->isSMTP();
+  $phpmailer->Host = 'smtp.gmail.com';
+  $phpmailer->SMTPAuth = true;
+  $phpmailer->Port = 587;
+  $phpmailer->Username = 'ideavateravi@gmail.com';
+  $phpmailer->Password = '$Ets@123!';
+}
+add_action('phpmailer_init', 'sendMail');
