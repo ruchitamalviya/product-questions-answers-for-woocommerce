@@ -119,22 +119,22 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			 	
 			<table>
 				<tr>
-					<td><h4><?php echo __('Load More','ets_q_n_a'); ?> : </h4></td>
+					<td><h4><?php echo __('Load More','ets_q_n_a'); ?>: </h4></td>
 					<td> 
 						 <?php wp_nonce_field( 'etsLoadMoreQa', 'ets_load_more_button' ); ?>
 						<input type="checkbox" <?php if(($loadButton == 1)) { echo $loadButton; ?> checked <?php }?> name="ets_load_more_active" value="1" >
 					</td> 	
 				</tr> 
 				<tr>
-					<td><h4><?php echo __('Page Size','ets_q_n_a'); ?> : </h4></td>
+					<td><h4><?php echo __('Page Size','ets_q_n_a'); ?>: </h4></td>
 					<td><input type="number" name="ets_length_of_list" value="<?php echo isset($lengthOfList) ? $lengthOfList : '';?>"  min="1"  ></td>
 				</tr> 
 				<tr>
-					<td><h4><?php echo __('Paging Button Name','ets_q_n_a'); ?> : </h4></td>
+					<td><h4><?php echo __('Paging Button Name','ets_q_n_a'); ?>: </h4></td>
 					<td><input type="text" name="ets_load_more_button_name" value="<?php echo isset($buttonName) ? $buttonName : '';?>" width="50px" height="90px"></td>
 				</tr>
 				<tr>
-					<td><h4><?php echo __('Layout','ets_q_n_a'); ?> : </h4></td>
+					<td><h4><?php echo __('Layout','ets_q_n_a'); ?>: </h4></td>
 					<td><select name="paging_type">
 					    	<option value="normal" <?php if($pagingType == "normal") { ?> selected <?php }?>><?php echo __('Normal','ets_q_n_a');?></option>
 					    	<option value="accordion"  <?php if($pagingType == "accordion") { ?> selected <?php }?>><?php echo __('Accordion','ets_q_n_a');?></option>
@@ -248,7 +248,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'    	  => "ets_question[$key]",  
 								'name'		  => "ets_question[$key]",
 								'value'       => $value['question'],
-								'label'       => __('Question','ets_q_n_a').' : '  
+								'label'       => __('Question','ets_q_n_a').': '  
 							) 
 						);
 						woocommerce_wp_textarea_input( 
@@ -256,7 +256,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'		  => "ets_answer[$key]",
 								'name'		  => "ets_answer[$key]",
 								'value'       =>  $value['answer'], 
-								'label'       => __('Answer','ets_q_n_a').' : ' 
+								'label'       => __('Answer','ets_q_n_a').': ' 
 							) 
 						);	
 						
@@ -584,7 +584,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array(  
 				'name'		  => "ets_new_question[$count]",
 				'value'       => '',
-				'label'       => __('Question','ets_q_n_a')." : ",
+				'label'       => __('Question','ets_q_n_a').": ",
 				'desc_tip'    => true,  	 
 			) 
 		);
@@ -593,7 +593,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array( 
 				'name'		  => "ets_new_answer[$count]",
 				'value'       =>  '', 
-				'label'       => __('Answer','ets_q_n_a').' : ',
+				'label'       => __('Answer','ets_q_n_a').': ',
 				'desc_tip'    => true,
 			) 
 		); 
