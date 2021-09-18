@@ -7,8 +7,8 @@ Author: Ravi Soni
 Tags: WooCommerce, product questions, product question answer, ask question about woocommerce products, product based questions woocommerce, questions on product details page, amazon like product questions
 Requires PHP: 5.2.4
 Requires at least: 4.0.0
-Tested up to: 5.2.1
-Stable tag: 1.0.0
+Tested up to: 5.6
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Allows the customers to ask questions about products and admin to answer/moderat
 This plugin allows the customers to ask questions about each product in your store and admin to answer/update/delete them and add new question from the backend product page.
 You can also drag and drop questions to change their order of appearance.
 
-PLUGIN FUNCTIONALITY:
+**PLUGIN FUNCTIONALITY:**
 1. Avails logged-in customers to ask questions about each product.
 2. Avails Administrator and Shop Manager to moderate questions and give answers.
 3. Avails Administrator and Shop Manager to change the order of question-answer pair on front-end.
@@ -51,3 +51,9 @@ On the backend product page, the plugin will add a new tab 'Q & A' which will ha
 == Configuration ==
 
 No configuration needed! just install and it will start working from there, you can change the settings at any time though.
+
+== Changelog ==
+
+= 1.0.1 =
+Added multi-language support.
+

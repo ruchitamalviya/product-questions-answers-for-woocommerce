@@ -1,32 +1,23 @@
 jQuery(document).ready(function(){	 
  	
  	jQuery('#ets-submit').click(function(e){
-    e.preventDefault();  
-    let submit = jQuery ("#ets-qus-form").serialize();  
-    jQuery('#ets-submit').prop('disabled', true);
+	    e.preventDefault();  
+	    let submit = jQuery ("#ets-qus-form").serialize();  
+	    jQuery('#ets-submit').prop('disabled', true);
         jQuery.ajax({ 
 			url: etsWooQaParams.admin_ajax,
 			type: 'POST', 
-			dataType: "JSON",
-			data: 'action=ets_post_qusetion_answer&' + submit + "&add_qustion_nonce=" + etsWooQaParams.add_qustion_nonce ,
+			dataType: "json",
+			data: 'action=ets_post_qusetion_answer&' + submit + "&add_qustion_nonce=" + etsWooQaParams.add_qustion_nonce,
 			success: function(res) {   
 				jQuery('#ets-submit').prop('disabled', false);
-				var messageResponse = res.message;
-				jQuery("#myInput").val("");
+				jQuery("#ques-text-ar").val("");
 				if( res.status == 1 ) {
-					jQuery(".ets-display-message").html(messageResponse);	
+					jQuery(".ets-display-message").html(res.message);	
 				} else {
-					jQuery(".ets-dis-message-error").html(messageResponse);
+					jQuery(".ets-dis-message-error").html(res.message);
 				}
-
-				/*if(messageResponse == "Question submit successfully"){  
-					 
-				} else  if(messageResponse == "Question not submit.") {  
-					jQuery(".ets-dis-message-error").append(messageResponse);
-				}else if(messageResponse == "Access not allowed."){
-					
-				}*/
-				jQuery("#myInput").on("click", function(){ 
+				jQuery("#ques-text-ar").on("click", function(){ 
 				  jQuery(".ets-display-message").text(""); 
 				  jQuery(".ets-dis-message-error").text("");
 				});
@@ -36,7 +27,16 @@ jQuery(document).ready(function(){
 				});    
             }
         }); 
-	}); 
+	});
+
+	jQuery("#ques-text-ar").on("click", function(){ 
+		jQuery(".ets-display-message").text(""); 
+		jQuery(".ets-dis-message-error").text("");
+	});
+	jQuery("#ets-submit").on("click", function(){ 
+		jQuery(".ets-display-message").text("");
+		jQuery(".ets-dis-message-error").text("");
+	});
 
 	jQuery('#ets-load-more').click(function(e){
 		e.preventDefault();  
@@ -53,7 +53,7 @@ jQuery(document).ready(function(){
 			success: function(res) {  
 				offset = res.offset;  
 				jQuery('.table1').append(res.htmlData);  
-				 jQuery('.ets-accordion-response-add').append(res.htmlData);
+				jQuery('.ets-accordion-response-add').append(res.htmlData);
 				jQuery('#ets_product_qa_length p').html(offset).hide(); 
 				if(offset >= qalength ){
 					jQuery("#ets-load-more").hide();
@@ -64,6 +64,6 @@ jQuery(document).ready(function(){
 }); 
 
 jQuery(document).on('click','.ets-accordion',function(){
-	jQuery(this).next().slideToggle();
-	 
-});	
+    jQuery(".ets-panel").slideUp();
+    jQuery(this).next().slideToggle();
+})

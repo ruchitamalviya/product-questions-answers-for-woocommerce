@@ -129,7 +129,8 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			try{  
 				$message = "<a href='$userProfileUrl'>" . $etsCustomerName . "</a> added a question on the <a href='$current_url'> " . $productTitle."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $question."</div>";  
 				$to = $admin_email;
-		        $subject = "New Question: " . get_bloginfo('name');wp_mail($to, $subject, $message);
+		        $subject = "New Question: " . get_bloginfo('name');
+		        wp_mail($to, $subject, $message);
 			}
 			catch(Exception $e)
 			{
@@ -165,7 +166,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			$uesrEmail = $user->user_email;
 		 	?>
 			<form action="#" method="post"  id="ets-qus-form" name="form">  
-				<textarea id="myInput" cols="45" rows="3" id="name" class="ets-qa-textarea"   name="question" value="" placeholder="<?php echo __('Enter your question here','ets_q_n_a') ?>..." height= "75px" ></textarea>
+				<textarea id="ques-text-ar" cols="45" rows="3" id="name" class="ets-qa-textarea"   name="question" value="" placeholder="<?php echo __('Enter your question here','ets_q_n_a') ?>..." height= "75px" ></textarea>
 				<input type="hidden" id="useremail" class="productId" name="usermail" value="<?php echo $uesrEmail ?>">
 				<input type="hidden" id="custId" class="productId" name="product_id" value="<?php echo $productId ?>">
 				<input type="hidden" id="productlength" class="productlength" name="Product_Qa_Length" value="<?php echo $productQaLength ?>">  
@@ -173,7 +174,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				<div class="ets-display-message"><p></p></div>
 				<div class="ets-dis-message-error"><p></p></div>
 				<button id="ets-submit" type="submit" name="submit" class="btn btn-info" ><?php echo __('Submit','ets_q_n_a'); ?></button> 
-			</form> 
+			</form>
 			<div id="ets_product_qa_length"><p></p></div>   
 			<?php 	
 		} else { ?>
@@ -210,7 +211,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 						$productQaLength = 4;
 					}
 
-					//Show Question Answer Listing Accordion Type With Load More Button
+					
 					if($pagingType == 'accordion'){
 						?>
 						<div class='ets-qa-listing'>
@@ -250,12 +251,13 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 						</div>
 						<?php
 					} else {
-						//Show Question Answer Listing Type Table With Load More
+						
 						?>
 						<div class="table-responsive my-table">
 						<table class="table table-striped">
 						<tbody class="table1">
-						<?php  
+						<?php
+						//Show Question Answer Listing Type Table With Load More 
 						foreach ($etsGetQuestion as $key => $value) {
 							?>
 							<tr class="ets-question-top">
@@ -265,13 +267,15 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 								echo ($value['date']); ?></h6></td>
 							</tr>
 							<?php 
-							if(!empty($value['answer'])){?>
+							if(!empty($value['answer'])){
+							?>
 								<tr>
 									<td class="ets-question-title"><p><?php echo __('Answer','ets_q_n_a'); ?>:</p></td>
 									<td colspan="2"><p> <?php echo $value['answer'];?></p></td> 
 								</tr> 
-								<?php 
-							} else { ?>
+							<?php 
+							} else {
+							?>
 								<tr>
 									<td class="ets-question-title"><p><?php echo __('Answer:','ets_q_n_a'); ?></p></td>
 									<td colspan="2" class="ets-no-answer" ><h6><p><i><?php echo __("Answer awaiting",'ets_q_n_a');?>...</i></p></h6></td>	
@@ -429,11 +433,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 					if($count > $productQaLength){
 						break;
 					}  
-				} 
-				?> 
-				 
-				<?php
-				
+				}
 			}
 			$htmlData = ob_get_clean(); 
 		}
@@ -449,7 +449,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	*  JS Variables
 	*/
 	public function qa_plugin_script() {
-		wp_enqueue_script( 'ets_woo_qa_script_js', ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_script.js',array( 'jquery' ),false,true  );
+		wp_enqueue_script( 'ets_woo_qa_script_js', ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_script.js',array( 'jquery' ),'1.6',true  );
 			$addQusNonce = wp_create_nonce('ets-product-add-new-question');
 			$loadQaNonce = wp_create_nonce('ets-product-load-more-question');
 
