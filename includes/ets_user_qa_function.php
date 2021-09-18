@@ -39,7 +39,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	public function question_tab( $tabs ) { 
 	     
 	    $tabs['ask'] = array(
-		    'title'     =>  __( __("Q & A",'ets_q_n_a'), 'woocommerce'),
+		    'title'     =>  apply_filters("wc_qa_tab_name" , __( __("Q & A",'ets_q_n_a'), 'woocommerce')),
 		    'priority'  => 50,
 		    'callback'  => array($this , 'ets_ask_qustion_tab')
     	);  
@@ -63,8 +63,8 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		if ( !is_user_logged_in() ) { 
 			echo json_encode( array( 
 						'status' => 0,
-						'message'	=> __('You are not logged in','ets_q_n_a').'.'
-					) 
+						'message'	=> apply_filters("wc_qa_not_logged_in_message", __('You are not logged in','ets_q_n_a').'.'
+					)) 
 			);
 			die; 
 		}
