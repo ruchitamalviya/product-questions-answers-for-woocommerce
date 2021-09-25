@@ -8,7 +8,7 @@ Tags: questions, answers, discussions, woocommerce, forum, storefront, details,	
 Requires PHP: 7.0
 Requires at least: 5.6
 Tested up to: 5.8.1
-Stable tag: 1.1.2
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,5 +55,8 @@ No configuration needed! just install and it will start working from there, you 
 == Changelog ==
 
 = 1.0.1 =
-Added multi-language support.
+- Added multi-language support.
 
+= 1.1.1 =
+- Fix: Fixed the email not being sent for questions and answers
+- Dev: Added the emails for changes in the answers by site admin.
