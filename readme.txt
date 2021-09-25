@@ -1,14 +1,14 @@
 === Product Questions & Answers for WooCommerce ===
 Plugin Name: Product Questions & Answers for WooCommerce
-Contributors: expresstechsoftware
+Contributors: expresstechsoftware, sunnysoni
 Donate link: https://www.paypal.me/supportsunny
 Author URI: https://www.expresstechsoftwares.com
-Author: Ravi Soni
-Tags: WooCommerce, product questions, product question answer, ask question about woocommerce products, product based questions woocommerce, questions on product details page, amazon like product questions
-Requires PHP: 5.2.4
-Requires at least: 4.0.0
-Tested up to: 5.6
-Stable tag: 1.0.2
+Author: ExpressTech Software Solutions Pvt. Ltd.
+Tags: questions, answers, discussions, woocommerce, forum, storefront, details,	e-commerce, expresstech
+Requires PHP: 7.0
+Requires at least: 5.6
+Tested up to: 5.8.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
