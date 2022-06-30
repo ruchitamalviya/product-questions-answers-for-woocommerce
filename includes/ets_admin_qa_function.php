@@ -145,7 +145,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					<td><button type="submit" name="ets_load_more"><?php echo __('Submit',"ets_q_n_a"); ?></button>
 				</tr>
 			</table>
-		</form>   
+		</form> 
 
 		<?php 
 	} 
@@ -186,10 +186,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				global $post; 
 				$productId = $post->ID; 
 				$etsGetQuestion = get_post_meta( $productId,'ets_question_answer', true ); 
-
 				if(!empty($etsGetQuestion)){   
 					foreach ($etsGetQuestion as $key => $value) {  
-						//var_dump($etsGetQuestion);
 							// to create hidden input field
 						?> <li id="ets-qa-item-<?php echo $key;?>" class="ets-qa-item" style="position: relative;"> 
 						<?php 
@@ -245,22 +243,41 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 						);
 					 	woocommerce_wp_text_input( 
 							array(
-								'id'    	  => "ets_question[$key]",  
-								'name'		  => "ets_question[$key]",
-								'value'       => $value['question'],
-								'label'       => __('Question','ets_q_n_a').': '  
+								'id'    	  =>  "ets_question[$key]",  
+								'name'		  =>  "ets_question[$key]",
+								'value'       =>  $value['question'],
+								'label'       =>  __('Question','ets_q_n_a').': '  
 							) 
 						);
+
 						woocommerce_wp_textarea_input( 
 							array( 
-								'id'		  => "ets_answer[$key]",
-								'name'		  => "ets_answer[$key]",
-								'value'       =>  $value['answer'], 
-								'label'       => __('Answer','ets_q_n_a').': ' 
+								'id'		   =>  "ets_answer[$key]",
+								'name'		   =>  "ets_answer[$key]",
+								'value'        =>  $value['answer'], 
+								'label'        =>  __('Answer','ets_q_n_a').': ' 
 							) 
 						);	
-						
-						
+
+						woocommerce_wp_checkbox( 
+							array( 
+								'id'		       	 =>  "ets_admin_apv[$key]",
+								'class'		       	 =>  "ets_admin_apv[$key] ets_admin_apv",
+								'name'		       	 =>  "ets_admin_apv[$key]",
+								'value'		       	 =>   $value['approve'],
+	 							'label'           	 =>  __('Admin Approval','ets_q_n_a').': ',	
+							)
+						);	
+						woocommerce_wp_hidden_input( 
+							array(  
+								'id'    	  => "ets_admin_approve[$key]",
+								'class'		  => "ets_admin_approve",
+								'name'		  => "ets_admin_approve[$key]",
+								'value'       => isset($value['approve']) ? $value['approve'] : 'no',   
+								'type'		  => 'hidden'
+							) 
+						);
+
 						if(empty($value['answer'])){
 								$value['empty_text'] = 'empty_text';
 								woocommerce_wp_hidden_input( 
@@ -309,7 +326,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 									'desc_tip'    => true, 	
 									'id'		  => 'ets_answer_data' 
 								) 
-							); 
+							);
+
+
 							echo '<div class="border"></div>';
 						?>
 					</li> 
@@ -349,8 +368,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		$empTextAnswer = isset($_POST['ets_emp_text_answer']) ? (is_array($_POST['ets_emp_text_answer']) ? array_map('sanitize_textarea_field' , $_POST['ets_emp_text_answer']) : '') : '';
 
 		$userEmail = isset($_POST['ets_user_email']) && $_POST['ets_user_email'] && is_array($_POST['ets_user_email']) ? array_map('sanitize_email', $_POST['ets_user_email']) : '';
-		 
-		
+
+		$admin_approve = isset($_POST['ets_admin_approve']) ? (is_array($_POST['ets_admin_approve']) ? array_map('sanitize_text_field' , $_POST['ets_admin_approve']) : '') : '';
+
 		$newDate = date("d-M-Y");
 		$user = wp_get_current_user();  
 		$newUesrName = $user->user_login;
@@ -359,39 +379,40 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		$question = isset($_POST['ets_first_question']) && $_POST['ets_first_question'] ? sanitize_text_field($_POST['ets_first_question']) : '';
 		$answer = isset($_POST['ets_first_answer']) && $_POST['ets_first_answer'] ? sanitize_textarea_field($_POST['ets_first_answer']) : '';
 		$prdTitle = get_the_title();
-
 		$before_save = get_post_meta( $productId,'ets_question_answer', true );
 	
 		//Insert the first New Question
 		if(!empty($question)){ 
 			 
-			$productFirstQa[]= array(
+			$productFirstQa[] = array(
 
-				"product_title" => $prdTitle,
-				"question" 	=> $question,
-				"answer"	=> $answer,
-				"date"		=> $newDate,
-				"user_name"	=> $newUesrName,
-				"user_email"=> $newUserEmail,
-				"user_id"	=> $newUserId 
+				"product_title"   =>   $prdTitle,
+				"question" 	      =>   $question,
+				"answer"	      =>   $answer,
+				"date"		      =>   $newDate,
+				"user_name"	      =>   $newUesrName,
+				"user_email"      =>   $newUserEmail,
+				"user_id"	      =>   $newUserId, 
+				"approve"		  =>   $adminApprove 
 			); 
 			update_post_meta( $productId, 'ets_question_answer',  $productFirstQa );
 		}  
 
 		$productQas = get_post_meta( $productId, 'ets_question_answer', true );
-		
+
 		//On Click Add new Field New Question
 		if(!empty($newQuestion)){ 
 			foreach ( $newQuestion as $qkey => $q) { 
 				
 				$productNewQas[$qkey] = array(   
-					"product_title" => $productTitle[$qkey],
-					"question" 	=> $newQuestion[$qkey],
-					"answer"	=> $newAnswer[$qkey], 
-					"date"		=> $newDate ,
-					"user_name"	=> $newUesrName,
-					"user_email"=> $newUserEmail,
-					"user_id"	=> $newUserId 
+					"product_title"    =>   $productTitle[$qkey],
+					"question" 	       =>   $newQuestion[$qkey],
+					"answer"	       =>   $newAnswer[$qkey], 
+					"date"		       =>   $newDate ,
+					"user_name"	       =>   $newUesrName, 
+					"user_email"       =>   $newUserEmail,
+					"user_id"	       =>   $newUserId, 
+					"approve"		 =>   $admin_approve[$qkey] 
 				);
 				
 				if(empty($productNewQas[$qkey]['question'])) {
@@ -415,13 +436,14 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			foreach ( $questions as $qkey => $q) {  
 
 				$productQas[$qkey] = array(
-					"product_title" => $productTitle[$qkey],
-					"user_id"	=> $userId[$qkey],
-					"user_email" => $userEmail[$qkey],
-					"user_name"	=> $userName[$qkey],
-					"question" 	=> $q,
-					"answer"	=> $answers[$qkey], 
-					"date"		=> $date[$qkey]
+					"product_title"  =>   $productTitle[$qkey],
+					"user_id"	     =>   $userId[$qkey],
+					"user_email"     =>   $userEmail[$qkey],
+					"user_name"	     =>   $userName[$qkey],
+					"question" 	     =>   $q,
+					"answer"	     =>   $answers[$qkey], 
+					"date"		     =>   $date[$qkey],
+					"approve"		 =>   $admin_approve[$qkey] 
 				
 				);
 
@@ -429,6 +451,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					unset($productQas[$qkey]);
 				}  
 			} 	
+			 
 			// update meta for answer at user question.	   
 		 	update_post_meta( $productId, 'ets_question_answer',  $productQas );  
 		}
@@ -477,8 +500,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		if(!wp_verify_nonce($_POST['changeOrderQa'],'ets-product-change-order-qa')){
 			
 			$response = array( 
-				'status'		=> 0,
-				'error'			=> __("Access not allowed").'.'
+				'status'		=>     0,
+				'error'			=>   __("Access not allowed").'.'
 			);
 			
 			echo json_encode($response);
@@ -517,11 +540,11 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	        wp_enqueue_script( 'ets_woo_qa_admin_script' );
 			
 			 	$script_params = array(
-					'admin_ajax' 		=> admin_url('admin-ajax.php'),
-					'currentProdcutId' 	=> $post->ID,
-					'addNewQaNonce' 	=> $addNewQaNonce,
-					'deleteQaNonce'		=> $deleteQa,
-					'changeOrderQa'		=> $changeOrderQa
+					'admin_ajax' 		=>   admin_url('admin-ajax.php'),
+					'currentProdcutId' 	=>   $post->ID,
+					'addNewQaNonce' 	=>   $addNewQaNonce,
+					'deleteQaNonce'		=>   $deleteQa,
+					'changeOrderQa'		=>   $changeOrderQa
 				);  
 		  	wp_localize_script( 'ets_woo_qa_admin_script', 'etsWooQaParams', $script_params ); 
 		}
@@ -546,13 +569,14 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		if(!wp_verify_nonce($_POST['deleteQaNonce'],'ets-product-delete-qa')){
 			
 			$response = array( 
-				'status'		=> 0,
-				'error'			=> __("Access not allowed").'.'
+				'status'		=>  0,
+				'error'			=>  __("Access not allowed").'.'
 			);
 			
 			echo json_encode($response);
 			die; 
 		}
+
 		$questionIndex = intval($_POST['questionIndex']);
 		$productId = intval($_POST['prdId']); 
 		$productQas = get_post_meta( $productId, 'ets_question_answer', true );
@@ -564,11 +588,11 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 * Add new Q&A field on click Add new Link
 	 */
 	public function add_new_qa_inputs(){
-		if(!wp_verify_nonce($_POST['addNewQaNonce'],'ets-product-add-new-qa')){
+		if( !wp_verify_nonce($_POST['addNewQaNonce'],'ets-product-add-new-qa')){
 			
 			$response = array( 
-				'status'		=> 0,
-				'error'			=> __("Access not allowed",'ets_q_n_a').'.'
+				'status'		=>  0,
+				'error'			=>  __("Access not allowed",'ets_q_n_a').'.'
 			);
 			
 			echo json_encode($response);
@@ -582,32 +606,51 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		ob_start();
 		woocommerce_wp_text_input( 
 			array(  
-				'name'		  => "ets_new_question[$count]",
-				'value'       => '',
-				'label'       => __('Question','ets_q_n_a').": ",
-				'desc_tip'    => true,  	 
+				'name'		  =>    "ets_new_question[$count]",
+				'value'       =>    '',
+				'label'       =>     __('Question','ets_q_n_a').": ",
+				'desc_tip'    =>    true,  	 
 			) 
 		);
 		
 		woocommerce_wp_textarea_input( 
 			array( 
-				'name'		  => "ets_new_answer[$count]",
-				'value'       =>  '', 
-				'label'       => __('Answer','ets_q_n_a').': ',
-				'desc_tip'    => true,
+				'name'		  =>   "ets_new_answer[$count]",
+				'value'       =>    '', 
+				'label'       =>     __('Answer','ets_q_n_a').': ',
+				'desc_tip'    =>     true,
 			) 
 		); 
+
+		woocommerce_wp_checkbox( 
+			array( 
+				'name'		        =>  "ets_admin_apv[$count]",
+				'class'				=>   "ets_admin_apv",		
+				'label'             =>   __('Admin Approval','ets_q_n_a').': ' ,
+			)
+		);
+
+		woocommerce_wp_hidden_input( 
+			array(  
+			'id'    	  => "ets_admin_approve[$count]",
+			'class'		  => "ets_admin_approve",
+			'name'		  => "ets_admin_approve[$count]",
+			'value'       => isset($value['approve']) ? $value['approve'] : 'yes',   
+			'type'		  => 'hidden'
+			) 
+		);	
 		
 		$count = $count + 1;
 		
 		echo '<div class="border"></div>';
 		$htmlData = ob_get_clean();  
 		$response = array( 
-			'htmlData'		=> $htmlData,
-			'count'			=> $count,
+			'htmlData'		=>   $htmlData,
+			'count'			=>   $count,
 		);
 		echo json_encode($response);
 		die;  
 	} 
-} 	
+}
+
 $etsWooProductAdminQuestionAnswer = new ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER(); 
