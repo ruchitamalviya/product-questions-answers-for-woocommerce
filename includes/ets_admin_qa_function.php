@@ -65,12 +65,14 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 */
 	public function etsLoadMoreQa(){
 		$loadButton = get_option( 'ets_load_more_button' ); 
+		
 		if(empty($loadButton)){  	
 			update_option( 'ets_load_more_button','true' );
 			update_option( 'ets_product_q_qa_list_length', '10' );
 			update_option( 'ets_load_more_button_name', __("Load More",'ets_q_n_a') );
 			update_option( 'ets_product_qa_paging_type', "normal" );
 			$loadButton = get_option( 'ets_load_more_button' );
+
 		}
 
 		$lengthOfList = get_option( 'ets_product_q_qa_list_length');
@@ -78,6 +80,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		$pagingType = get_option( 'ets_product_qa_paging_type');
 
 		if (isset($_POST['ets_load_more'])) {
+			$adminApprove = isset($_POST['ets_approve']) ? 'yes' : 'no' ;
+			update_option( 'ets_approve', $adminApprove );
+			
 			if(!isset($_POST['ets_load_more_button']) || (!wp_verify_nonce($_POST['ets_load_more_button'] , 'etsLoadMoreQa' ))){
 			 	 
 			 	$this->etsErrorNotification();
@@ -87,12 +92,16 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				$lengthOfList = intval($_POST['ets_length_of_list']); 
 				$buttonName   = sanitize_text_field($_POST['ets_load_more_button_name']);  
 				$pagingType   = sanitize_text_field($_POST['paging_type']);
+				
+				
 				 
 				if($loadButton == 1){ 
 					if(!empty($lengthOfList)){
 						update_option( 'ets_load_more_button', $loadButton );
 						update_option( 'ets_product_q_qa_list_length', $lengthOfList );
 						update_option( 'ets_product_qa_paging_type', $pagingType );
+						// update_option( 'approve', $adminApprove );
+
 						if(!empty($buttonName)){
 							update_option( 'ets_load_more_button_name', $buttonName );
 						} else {
@@ -109,10 +118,14 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					update_option( 'ets_product_q_qa_list_length', $lengthOfList );
 					update_option( 'ets_load_more_button_name', $buttonName );
 					update_option( 'ets_product_qa_paging_type', $pagingType );
+					
+
 				} 
-			}
-			 	 
+			}			 	 
 		} 
+		$aprValue = get_option('ets_approve');
+		
+		
 		?><div class="wrap"><div id="icon-options-general" class="icon32"><br></div>
 		<h2><?php echo __("Product Q & A Setting",'ets_q_n_a'); ?></h2></div>
 		<form method="post" name="load_more_form" action="#"> 
@@ -141,8 +154,12 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 						</select>
 					</td>
 				</tr>
+				<tr>
+					<td><h4><?php echo __('Admin Approval','ets_q_n_a'); ?>: </h4></td>
+					<td><input type="checkbox" name="ets_approve" value="yes" <?php if(isset($aprValue) && $aprValue == 'yes'){ echo "checked"; } else { '' ; }?>></td>
+				</tr> 
 				<tr><td></td>
-					<td><button type="submit" name="ets_load_more"><?php echo __('Submit',"ets_q_n_a"); ?></button>
+					<td><button type="submit" name="ets_load_more" class="button button-primary button-large"><?php echo __('Submit',"ets_q_n_a"); ?></button>
 				</tr>
 			</table>
 		</form> 
@@ -265,7 +282,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'class'		       	 =>  "ets_admin_apv[$key] ets_admin_apv",
 								'name'		       	 =>  "ets_admin_apv[$key]",
 								'value'		       	 =>   $value['approve'],
-	 							'label'           	 =>  __('Admin Approval','ets_q_n_a').': ',	
+	 							'label'           	 =>  __('Approval','ets_q_n_a').': ',	
 							)
 						);	
 						woocommerce_wp_hidden_input( 
@@ -626,7 +643,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array( 
 				'name'		        =>  "ets_admin_apv[$count]",
 				'class'				=>   "ets_admin_apv",		
-				'label'             =>   __('Admin Approval','ets_q_n_a').': ' ,
+				'label'             =>   __('Approval','ets_q_n_a').': ' ,
 			)
 		);
 
