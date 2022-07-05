@@ -100,8 +100,8 @@
 .ets-qa-item p input[type="checkbox"]
 {
     background: #ededed;
-    min-width:5%;
-    height: 20px;
+    min-width:4%;
+    height: 18px;
 }
 .ets-qa-item p textarea{
      
