@@ -195,22 +195,36 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			$productQaLength = get_option('ets_product_q_qa_list_length'); 
 			$loadMoreButton = get_option('ets_load_more_button'); 	
 			$pagingType = get_option('ets_product_qa_paging_type' ); 
-			$etsGetQuestion = get_post_meta( $productId,'ets_question_answer', true );
+			$all_questions = get_post_meta( $productId,'ets_question_answer', true );
+			$etsGetQuestion = [];
+			foreach ($all_questions as $key => $value) { 
+				if((isset($value['approve']) && $value['approve'] == 'yes') || !isset($value['approve'])){
+					if($value)
+					$etsGetQuestion[] = $value;
+
+				}
+			}
 			
 			if(!empty($etsGetQuestion)){ 
 				end( $etsGetQuestion);
 				$keyData =  max(array_keys($etsGetQuestion));
+
             } 
+
 			if($loadMoreButton == 1) { 
 				if(empty($loadMoreButtonName)){
 					$loadMoreButtonName = __("Load More",'ets_q_n_a');
 					update_option( 'ets_load_more_button_name', $loadMoreButtonName );
 				}  
+
+				
 				if(!empty($etsGetQuestion)){ 
 					
 					$count = 1;
-					if (empty($productQaLength)) {    
-						$productQaLength = 4;
+
+					if (empty($productQaLength)) {  
+					  	$productQaLength = 4;
+						
 					}
 
 					
@@ -368,47 +382,70 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		$loadMoreButtonName = get_option('ets_load_more_button_name');
 		$pagingType = get_option('ets_product_qa_paging_type' ); 
 		$productQaLength = get_option('ets_product_q_qa_list_length');  
-		$etsGetQuestion = get_post_meta( $productId,'ets_question_answer', true );
- 		$offset = $offsetdata + $productQaLength;  
-		array_splice($etsGetQuestion,0,$offset);  
+		$all_questions = get_post_meta( $productId,'ets_question_answer', true );
+		$filtered_question = [];
+		foreach ($all_questions as $key => $value) { 
+			if((isset($value['approve']) && $value['approve'] == 'yes') || !isset($value['approve'])){
+				if($value)
+				$filtered_question[] = $value;
+			}
+		}
 
+
+		$offset = $a = $offsetdata + $productQaLength; 
+		$etsGetQuestion = [];
+		
+		end($filtered_question);  
+		$last_key = key($filtered_question); 
+
+		foreach (range(0,intval($productQaLength)) as $index) {
+
+			if(isset($filtered_question[$a])){
+				$etsGetQuestion[] = $filtered_question[$a];
+				$a++;
+			}
+		}
+		
 		if(!empty($etsGetQuestion)){ 
 			ob_start(); 
-			$count = 1;  
+			$count = 1; 
 			
 			//Show Question Answer Listing Accordion Type With Load More Button
 			if($pagingType == 'accordion'){
+				 
 				?>
 				<div class='ets-qa-listing'>
 				<?php
 				foreach ($etsGetQuestion as $key => $value) { 
 					if((isset($value['approve']) && $value['approve'] == 'yes') || !isset($value['approve'])){
+						
 						?>
 						<div class="ets-accordion">
-									<span class="que-content ans-content"><b><?php echo __('Question','ets_q_n_a'); ?>:</b></span>
-									<span class="que-content-des"><?php echo $value['question'];?></span>
-									<h6><?php echo $value['user_name']. "<br>";?><?php echo $value['date'];?></h6>
-								</div>
-								<div class="ets-panel">
-									<?php 
-									if(!empty($value['answer'])){?>
-										<span class="ans-content"><b><?php echo __('Answer','ets_q_n_a'); ?>:</b>
-										</span>
-										<span class="ans-content-des"><?php echo $value['answer'];?>
-										</span>
-									 
+							<span class="que-content ans-content"><b><?php echo __('Question','ets_q_n_a'); ?>:</b></span>
+							<span class="que-content-des"><?php echo $value['question'];?></span>
+							<h6><?php echo $value['user_name']. "<br>";?><?php echo $value['date'];?></h6>
+						</div>
+						<div class="ets-panel">
+							<?php 
+							if(!empty($value['answer'])){?>
+								<span class="ans-content"><b><?php echo __('Answer','ets_q_n_a'); ?>:</b>
+								</span>
+								<span class="ans-content-des"><?php echo $value['answer'];?>
+								</span>
+							 
 								<?php 
-									} else { ?>
-									<span class="ans-content"><b><?php echo __('Answer:','ets_q_n_a'); ?></b></span>
-									<span class="ans-content-des"><i><?php echo __("Answer awaiting",'ets_q_n_a');?>...</i>
-									</span> 
-									<?php
-								}?>
-								</div><?php  
-								$count++;
-								if($count > $productQaLength){
-									break;
-					}			}  
+							} else { ?>
+								<span class="ans-content"><b><?php echo __('Answer:','ets_q_n_a'); ?></b></span>
+								<span class="ans-content-des"><i><?php echo __("Answer awaiting",'ets_q_n_a');?>...</i>
+								</span> 
+								<?php
+							} ?>
+						</div><?php  
+						$count++;
+						if($count > $productQaLength){
+							break;
+						}
+					}
 				} 
 				?>
 				</div>

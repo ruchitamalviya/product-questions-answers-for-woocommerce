@@ -155,7 +155,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					</td>
 				</tr>
 				<tr>
-					<td><h4><?php echo __('Admin Approval','ets_q_n_a'); ?>: </h4></td>
+					<td><h4><?php echo __('Auto Approval','ets_q_n_a'); ?>: </h4></td>
 					<td><input type="checkbox" name="ets_approve" value="yes" <?php if(isset($aprValue) && $aprValue == 'yes'){ echo "checked"; } else { '' ; }?>></td>
 				</tr> 
 				<tr><td></td>
@@ -282,7 +282,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'class'		       	 =>  "ets_admin_apv[$key] ets_admin_apv",
 								'name'		       	 =>  "ets_admin_apv[$key]",
 								'value'		       	 =>   $value['approve'],
-	 							'label'           	 =>  __('Approval','ets_q_n_a').': ',	
+	 							'label'           	 =>  __('Approve','ets_q_n_a').': ',	
 							)
 						);	
 						woocommerce_wp_hidden_input( 
@@ -643,7 +643,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array( 
 				'name'		        =>  "ets_admin_apv[$count]",
 				'class'				=>   "ets_admin_apv",		
-				'label'             =>   __('Approval','ets_q_n_a').': ' ,
+				'label'             =>   __('Approve','ets_q_n_a').': ' ,
 			)
 		);
 
