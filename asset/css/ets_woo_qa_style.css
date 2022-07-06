@@ -97,8 +97,7 @@
     height: 35px;
     font-family: initial;
 }
-.ets-qa-item p input[type="checkbox"]
-{
+.ets-qa-item p input[type="checkbox"]{
     background: #ededed;
     min-width:4%;
     height: 18px;

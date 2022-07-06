@@ -204,7 +204,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				$productId = $post->ID; 
 				$etsGetQuestion = get_post_meta( $productId,'ets_question_answer', true ); 
 				if(!empty($etsGetQuestion)){   
-					foreach ($etsGetQuestion as $key => $value) {  
+					foreach ($etsGetQuestion as $key => $value) { 
 							// to create hidden input field
 						?> <li id="ets-qa-item-<?php echo $key;?>" class="ets-qa-item" style="position: relative;"> 
 						<?php 
@@ -278,23 +278,16 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 
 						woocommerce_wp_checkbox( 
 							array( 
-								'id'		       	 =>  "ets_admin_apv[$key]",
-								'class'		       	 =>  "ets_admin_apv[$key] ets_admin_apv",
-								'name'		       	 =>  "ets_admin_apv[$key]",
-								'value'		       	 =>   $value['approve'],
-	 							'label'           	 =>  __('Approve','ets_q_n_a').': ',	
+								'id'    =>  "ets_admin_apv[$key]",
+								'class'	=>  "ets_admin_apv[$key] ets_admin_apv",
+								'name'  =>  "ets_admin_apv[$key]",
+								'value'	=> (isset($value['approve']) && $value['approve'] =='yes')  ? $value['approve'] :'no',
+								'cbvalue' => 'yes',
+								
+	 							'label'   =>  __('Approve','ets_q_n_a').': ',
 							)
-						);	
-						woocommerce_wp_hidden_input( 
-							array(  
-								'id'    	  => "ets_admin_approve[$key]",
-								'class'		  => "ets_admin_approve",
-								'name'		  => "ets_admin_approve[$key]",
-								'value'       => isset($value['approve']) ? $value['approve'] : 'no',   
-								'type'		  => 'hidden'
-							) 
 						);
-
+							
 						if(empty($value['answer'])){
 								$value['empty_text'] = 'empty_text';
 								woocommerce_wp_hidden_input( 
@@ -386,8 +379,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 
 		$userEmail = isset($_POST['ets_user_email']) && $_POST['ets_user_email'] && is_array($_POST['ets_user_email']) ? array_map('sanitize_email', $_POST['ets_user_email']) : '';
 
-		$admin_approve = isset($_POST['ets_admin_approve']) ? (is_array($_POST['ets_admin_approve']) ? array_map('sanitize_text_field' , $_POST['ets_admin_approve']) : '') : '';
-
+		$admin_approve = isset($_POST['ets_admin_apv']) ? (is_array($_POST['ets_admin_apv']) ? array_map('sanitize_text_field' , $_POST['ets_admin_apv']) : '') : [];
+		
 		$newDate = date("d-M-Y");
 		$user = wp_get_current_user();  
 		$newUesrName = $user->user_login;
@@ -410,12 +403,13 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				"user_name"	      =>   $newUesrName,
 				"user_email"      =>   $newUserEmail,
 				"user_id"	      =>   $newUserId, 
-				"approve"		  =>   $adminApprove 
+				"approve"		  =>   $admin_approve 
 			); 
 			update_post_meta( $productId, 'ets_question_answer',  $productFirstQa );
 		}  
 
 		$productQas = get_post_meta( $productId, 'ets_question_answer', true );
+
 
 		//On Click Add new Field New Question
 		if(!empty($newQuestion)){ 
@@ -429,7 +423,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					"user_name"	       =>   $newUesrName, 
 					"user_email"       =>   $newUserEmail,
 					"user_id"	       =>   $newUserId, 
-					"approve"		 =>   $admin_approve[$qkey] 
+					"approve"		 =>   isset($admin_approve[$qkey]) ? $admin_approve[$qkey] : 'no' 
 				);
 				
 				if(empty($productNewQas[$qkey]['question'])) {
@@ -460,7 +454,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 					"question" 	     =>   $q,
 					"answer"	     =>   $answers[$qkey], 
 					"date"		     =>   $date[$qkey],
-					"approve"		 =>   $admin_approve[$qkey] 
+					"approve"		 =>   isset($admin_approve[$qkey]) ? $admin_approve[$qkey] : 'no' 
 				
 				);
 
@@ -471,6 +465,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			 
 			// update meta for answer at user question.	   
 		 	update_post_meta( $productId, 'ets_question_answer',  $productQas );  
+
 		}
 
 		//user mail from admin
@@ -606,7 +601,6 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 */
 	public function add_new_qa_inputs(){
 		if( !wp_verify_nonce($_POST['addNewQaNonce'],'ets-product-add-new-qa')){
-			
 			$response = array( 
 				'status'		=>  0,
 				'error'			=>  __("Access not allowed",'ets_q_n_a').'.'
@@ -644,18 +638,12 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				'name'		        =>  "ets_admin_apv[$count]",
 				'class'				=>   "ets_admin_apv",		
 				'label'             =>   __('Approve','ets_q_n_a').': ' ,
+				'value'	=> (isset($value['approve']) && $value['approve'] =='yes')  ? $value['approve'] :'no',
+				'cbvalue' => 'yes',
 			)
 		);
 
-		woocommerce_wp_hidden_input( 
-			array(  
-			'id'    	  => "ets_admin_approve[$count]",
-			'class'		  => "ets_admin_approve",
-			'name'		  => "ets_admin_approve[$count]",
-			'value'       => isset($value['approve']) ? $value['approve'] : 'yes',   
-			'type'		  => 'hidden'
-			) 
-		);	
+		
 		
 		$count = $count + 1;
 		

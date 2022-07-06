@@ -52,12 +52,4 @@ jQuery(document).ready(function(){
 	    }
 	});
 
-	jQuery('.ets_admin_apv').on('change', function(){
-		if(jQuery(this).prop('checked'))
-	        {
-	            jQuery(this).parent().parent().find('.ets_admin_approve').val('yes');
-	        } else {
-	            jQuery(this).parent().parent().find('.ets_admin_approve').val('no');
-	        }
-	});
 });
