@@ -299,6 +299,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								) 
 							);					
 						}
+						do_action('wc_after_qa_inputs', $productId, $key);
 						?>	
 					<div class="image-preview">
 
@@ -339,6 +340,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 
 
 							echo '<div class="border"></div>';
+							do_action('wc_after_qa_inputs', $productId);
 						?>
 					</li> 
 					<?php 
@@ -346,7 +348,10 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		 		<li class="ets-new-qa-field ets-qa-item"></li>  
 		 		</ul> 
 		 		<input type="hidden" name="ets-new-question-Answer-count" id="ets-new-question-Answer-count" value=""> 
-				<a href="#" type="submit" name="ets-add-new-qa" class="ets-add-new-qa ">+<?php echo __('Add New',"ets_q_n_a"); ?></a>   
+				<a href="#" type="submit" name="ets-add-new-qa" class="ets-add-new-qa ">+<?php 
+					echo apply_filters('wc_add_new_qa_label', __('Add New',"ets_q_n_a"));
+					?></a>
+
 				
 			</div>
 		</div> 	
@@ -389,6 +394,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		$answer = isset($_POST['ets_first_answer']) && $_POST['ets_first_answer'] ? sanitize_textarea_field($_POST['ets_first_answer']) : '';
 		$prdTitle = get_the_title();
 		$before_save = get_post_meta( $productId,'ets_question_answer', true );
+		do_action('wc_before_qa_save', $productId);
 	
 		//Insert the first New Question
 		if(!empty($question)){ 
@@ -466,6 +472,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		 	update_post_meta( $productId, 'ets_question_answer',  $productQas );  
 
 		}
+		do_action('wc_after_qa_save', $productId);
 
 		//user mail from admin
 		$after_save = get_post_meta( $productId,'ets_question_answer', true );
@@ -485,19 +492,22 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				if ( !empty(trim($value['answer'])) && !empty(trim($value['user_email'])) && (trim($value['answer']) != trim($before_save[$key]['answer']) && !empty( trim( $before_save[$key]['answer'] )  ) ) )
 				{
 
-			 		$subject = __("Answer to Your Question was Updated",'ets_q_n_a'). ': ' . get_bloginfo('name');
+			 		$subject =apply_filters("wc_qa_answer_updated_mail_subject" ,__("Answer to Your Question was Updated",'ets_q_n_a'). ': ' . get_bloginfo('name'));
 			 		$message = "Dear " . $userName . ",<br><br>";
 			 		$message .= "<a href='$site_url'>" . $site_name . "</a> updated an answer to your question on the product <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
+
+			 		$message = apply_filters("wc_qa_answer_updated_mail_message", $message, $productTitle, $answers);
 
 				    $res = wp_mail($to, $subject, $message);
 				 
 				// First time answer    
 				} elseif ( empty( trim( $before_save[$key]['answer'] ) ) && !empty( trim( $value['answer'] ) )  && !empty(trim($value['user_email'])) ) {  
 
-			 		$subject = __("Your Question was Answered",'ets_q_n_a'). ': ' . get_bloginfo('name');
+			 		$subject = apply_filters("wc_qa_new_answer_mail_subject", $subject);
 			 		$message = "Dear " . $userName . ",<br><br>";
 			 		$message .= "<a href='$site_url'>" . $site_name . "</a> added an answer on the product <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
 
+			 		$message = apply_filters("wc_qa_new_answer_mail_message", $message, $productTitle, $answers);
 				    $res = wp_mail($to, $subject, $message);
 				}
 			}
@@ -642,8 +652,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			)
 		);
 
-		
-		
+		do_action('wc_ajax_after_qa_inputs', $count);
 		$count = $count + 1;
 		
 		echo '<div class="border"></div>';

@@ -39,7 +39,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	public function question_tab( $tabs ) { 
 	     
 	    $tabs['ask'] = array(
-		    'title'     =>  __( __("Q & A",'ets_q_n_a'), 'woocommerce'),
+		    'title'     =>  apply_filters("wc_qa_tab_name" , __( __("Q & A",'ets_q_n_a'), 'woocommerce')),
 		    'priority'  => 50,
 		    'callback'  => array($this , 'ets_ask_qustion_tab')
     	);  
@@ -62,9 +62,9 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		}
 		if ( !is_user_logged_in() ) { 
 			echo json_encode( array( 
-						'status' => 0,
-						'message'	=> __('You are not logged in','ets_q_n_a').'.'
-					) 
+						'status' =>  0,
+						'message'	=> apply_filters("wc_qa_not_logged_in_message", __('You are not logged in','ets_q_n_a').'.'
+					)) 
 			);
 			die; 
 		}
@@ -198,11 +198,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			$all_questions = get_post_meta( $productId,'ets_question_answer', true );
 			
 			$etsGetQuestion = array_filter($all_questions, function ($filterQuestion) {
-				if((isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve'])){
-					if ($filterQuestion) {
-						return $filterQuestion;
-					}
-				}
+				return (isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve']);
 			});
 			
 			if(!empty($etsGetQuestion)){ 
@@ -380,12 +376,9 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		$productQaLength = get_option('ets_product_q_qa_list_length');  
 		$allQuestions = get_post_meta( $productId,'ets_question_answer', true );
 
-		$filteredQue = array_filter($allQuestions, function ($filterQuestion) {
-			if((isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve'])){
-				if ($filterQuestion) {
-					return $filterQuestion;
-				}
-			}
+		$filteredQue = array_filter($allQuestions, function ($filterQuestion){
+				return (isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve']);
+
 		});
 
 		$offset = $a = $offsetdata + $productQaLength; 
