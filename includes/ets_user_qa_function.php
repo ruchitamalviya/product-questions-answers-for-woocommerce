@@ -90,7 +90,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				'product_title' 	=> $productTitle,
 				'user_id' 			=> $etsCustomerId,
 				'date'				=> $date,
-				'approve'			=> get_option('ets_approve', true) ? get_option('ets_approve',true) : 'no'
+				'approve'			=> get_option('ets_qa_approve', true) ? get_option('ets_qa_approve',true) : 'no'
 			);  
 
 			$etsBlankArray = array();
@@ -197,12 +197,11 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			$pagingType = get_option('ets_product_qa_paging_type' ); 
 			$all_questions = get_post_meta( $productId,'ets_question_answer', true );
 			
-			$etsGetQuestion = array_filter($all_questions, function ($value) {
-				if((isset($value['approve']) && $value['approve'] == 'yes') || !isset($value['approve'])){
-					if ($value) {
-						return $etsGetQuestion = $value;
+			$etsGetQuestion = array_filter($all_questions, function ($filterQuestion) {
+				if((isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve'])){
+					if ($filterQuestion) {
+						return $filterQuestion;
 					}
-
 				}
 			});
 			
@@ -379,27 +378,26 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		$loadMoreButtonName = get_option('ets_load_more_button_name');
 		$pagingType = get_option('ets_product_qa_paging_type' ); 
 		$productQaLength = get_option('ets_product_q_qa_list_length');  
-		$all_questions = get_post_meta( $productId,'ets_question_answer', true );
+		$allQuestions = get_post_meta( $productId,'ets_question_answer', true );
 
-		$filtered_question = array_filter($all_questions, function ($value) {
-			if((isset($value['approve']) && $value['approve'] == 'yes') || !isset($value['approve'])){
-				if ($value) {
-					return $filtered_question = $value;
+		$filteredQue = array_filter($allQuestions, function ($filterQuestion) {
+			if((isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve'])){
+				if ($filterQuestion) {
+					return $filterQuestion;
 				}
-
 			}
 		});
 
 		$offset = $a = $offsetdata + $productQaLength; 
 		$etsGetQuestion = [];
 		
-		end($filtered_question);  
-		$last_key = key($filtered_question); 
+		end($filteredQue);  
+		$last_key = key($filteredQue); 
 
 		foreach (range(0,intval($productQaLength)) as $index) {
 
-			if(isset($filtered_question[$a])){
-				$etsGetQuestion[] = $filtered_question[$a];
+			if(isset($filteredQue[$a])){
+				$etsGetQuestion[] = $filteredQue[$a];
 				$a++;
 			}
 		}

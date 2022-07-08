@@ -18,7 +18,6 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			 
 			//Add CSS file.
 			add_action( 'admin_enqueue_scripts',array($this, 'admin_style'));  
-
 			// add new Tab. 
 			add_filter('woocommerce_product_data_tabs', array($this, 'product_tab_admin_qa'));
 			
@@ -80,8 +79,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		$pagingType = get_option( 'ets_product_qa_paging_type');
 
 		if (isset($_POST['ets_load_more'])) {
-			$adminApprove = isset($_POST['ets_approve']) ? 'yes' : 'no' ;
-			update_option( 'ets_approve', $adminApprove );
+			$adminApprove = isset($_POST['ets_qa_approve']) ? 'yes' : 'no' ;
+			update_option( 'ets_qa_approve', $adminApprove );
 			
 			if(!isset($_POST['ets_load_more_button']) || (!wp_verify_nonce($_POST['ets_load_more_button'] , 'etsLoadMoreQa' ))){
 			 	 
@@ -123,7 +122,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				} 
 			}			 	 
 		} 
-		$aprValue = get_option('ets_approve');
+		$aprValue = get_option('ets_qa_approve');
 		
 		
 		?><div class="wrap"><div id="icon-options-general" class="icon32"><br></div>
@@ -156,7 +155,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				</tr>
 				<tr>
 					<td><h4><?php echo __('Auto Approve','ets_q_n_a'); ?>: </h4></td>
-					<td><input type="checkbox" name="ets_approve" value="yes" <?php if(isset($aprValue) && $aprValue == 'yes'){ echo "checked"; } else { '' ; }?>></td>
+					<td><input type="checkbox" name="ets_qa_approve" value="yes" <?php if(isset($aprValue) && $aprValue == 'yes'){ echo "checked"; } else { '' ; }?>></td>
 				</tr> 
 				<tr><td></td>
 					<td><button type="submit" name="ets_load_more" class="button button-primary button-large"><?php echo __('Submit',"ets_q_n_a"); ?></button>
