@@ -2,21 +2,20 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-
 class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER 
 {		
 	public function __construct() {
 	 
 		// Create the new Tabe Add Question Field
-		add_filter( 'woocommerce_product_tabs',  		 	array($this, 'question_tab'));
+		add_filter( 'woocommerce_product_tabs', array($this, 'question_tab'));
 		
-		add_action( 'wp_ajax_ets_post_qusetion_answer',		array($this, 'question_save'));	
+		add_action( 'wp_ajax_ets_post_qusetion_answer', array($this, 'question_save'));	
 
 		// Load The Q & A on click Load More Button
-		add_action( 'wp_ajax_ets_product_qa_load_more',		array($this, 'load_more_qa'));
+		add_action( 'wp_ajax_ets_product_qa_load_more', array($this, 'load_more_qa'));
 
 		// without login
-		add_action( 'wp_ajax_nopriv_ets_product_qa_load_more',		array($this, 'load_more_qa'));
+		add_action( 'wp_ajax_nopriv_ets_product_qa_load_more',array($this, 'load_more_qa'));
 
 		//variable Creation js
 		add_action( 'wp_enqueue_scripts',array($this, 'qa_plugin_script' ));
@@ -29,8 +28,6 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 
 		//Mail Content Type Html
 		add_filter( 'wp_mail_content_type',array($this, 'set_html_mail_contente_type'));
-
-
 	}
 
 	/**
@@ -186,7 +183,8 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				<input type="hidden" id="producttitle" name="ets_Product_Title" value="<?php echo $productTitle ?>"> 
 			</form>
 			<div id="ets_product_qa_length"><p></p></div> 
-			<a href="<?php echo $site_url.'/wp-login.php' ?>" class="ets-load-more">
+			<a href="<?php echo apply_filters('wc_add_qa_login_url', $site_url.'/wp-login.php') ?>" class="ets-load-more">
+					
 			<?php echo __('Please login to post questions', 'ets_q_n_a');?>.
 			</a> 
 			<?php  
@@ -322,32 +320,30 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 					<table class="table table-striped"> 
 					<?php
 					foreach ($etsGetQuestion as $key => $value) {
-						if((isset($value['approve']) && $value['approve'] == 'yes') || !isset($value['approve'])){
-						
-							?> 
-							<tr class="ets-question-top">
-									<td class="ets-question-title"><p><?php echo __('Question','ets_q_n_a'); ?>:</p></td>
-									<td class="ets-question-description"><p><?php echo $value['question'];?></p></td> 
-									<td class="ets-cont-right"><h6 class="user-name"><?php echo $value['user_name'] . "<br>";    
-									echo ($value['date']);
-									?></h6></td>
-							</tr>
+						?> 
+						<tr class="ets-question-top">
+								<td class="ets-question-title"><p><?php echo __('Question','ets_q_n_a'); ?>:</p></td>
+								<td class="ets-question-description"><p><?php echo $value['question'];?></p></td> 
+								<td class="ets-cont-right"><h6 class="user-name"><?php echo $value['user_name'] . "<br>";    
+								echo ($value['date']);
+								?></h6></td>
+						</tr>
 
+						<?php 
+						if(!empty($value['answer'])){?>
+							<tr>
+								<td class="ets-question-title"><p><?php echo __('Answer','ets_q_n_a'); ?>:</p></td>
+								<td colspan="2"><p> <?php echo $value['answer'];?></p></td> 
+							</tr> 
 							<?php 
-							if(!empty($value['answer'])){?>
-								<tr>
-									<td class="ets-question-title"><p><?php echo __('Answer','ets_q_n_a'); ?>:</p></td>
-									<td colspan="2"><p> <?php echo $value['answer'];?></p></td> 
-								</tr> 
-								<?php 
-							} else { ?>
-								<tr>
-									<td class="ets-question-title"><p><?php echo __('Answer','ets_q_n_a'); ?>:</p></td>
-									<td colspan="2" class="ets-no-answer"><h6><p><i><?php echo __("Answer awaiting",'ets_q_n_a');?>...</i></p></h6></td>	
-								</tr> 
-								<?php
-							}
+						} else { ?>
+							<tr>
+								<td class="ets-question-title"><p><?php echo __('Answer','ets_q_n_a'); ?>:</p></td>
+								<td colspan="2" class="ets-no-answer"><h6><p><i><?php echo __("Answer awaiting",'ets_q_n_a');?>...</i></p></h6></td>	
+							</tr> 
+							<?php
 						}
+						
 					}
 					?> 
 					</table>
