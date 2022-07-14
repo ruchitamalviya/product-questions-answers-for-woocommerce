@@ -9,10 +9,10 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		// Create the new Tabe Add Question Field
 		add_filter( 'woocommerce_product_tabs', array($this, 'question_tab'));
 		
-		add_action( 'wp_ajax_ets_post_qusetion_answer', array($this, 'question_save'));	
+		add_action( 'wp_ajax_ets_post_qusetion_answer',array($this, 'question_save'));	
 
 		// Load The Q & A on click Load More Button
-		add_action( 'wp_ajax_ets_product_qa_load_more', array($this, 'load_more_qa'));
+		add_action( 'wp_ajax_ets_product_qa_load_more',array($this, 'load_more_qa'));
 
 		// without login
 		add_action( 'wp_ajax_nopriv_ets_product_qa_load_more',array($this, 'load_more_qa'));
@@ -28,6 +28,8 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 
 		//Mail Content Type Html
 		add_filter( 'wp_mail_content_type',array($this, 'set_html_mail_contente_type'));
+
+
 	}
 
 	/**
@@ -100,8 +102,9 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				array_push( $etsBlankArray, $etsUserQusetion ); 
 				$result = update_post_meta( $productId, 'ets_question_answer', $etsBlankArray);
 			} 
-		}	
-		
+		}
+
+		do_action('wc_qa_question_save', $productId, $question, $etsCustomerId);
 		if( isset($result) ){     
 			//send email notification to admin 
 			$response = array(

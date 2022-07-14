@@ -466,8 +466,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				if(empty($productQas[$qkey]['question'])) {
 					unset($productQas[$qkey]);
 				}  
-			} 	
-			 
+			} 
+
+			do_action('wc_after_qa_update', $productId, $productQas); 
 			// update meta for answer at user question.	   
 		 	update_post_meta( $productId, 'ets_question_answer',  $productQas );  
 
@@ -665,5 +666,4 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		die;  
 	} 
 }
-
 $etsWooProductAdminQuestionAnswer = new ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER(); 
