@@ -197,11 +197,14 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 			$loadMoreButton = get_option('ets_load_more_button'); 	
 			$pagingType = get_option('ets_product_qa_paging_type' ); 
 			$all_questions = get_post_meta( $productId,'ets_question_answer', true );
-			
-			$etsGetQuestion = array_filter($all_questions, function ($filterQuestion) {
-				return (isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve']);
-			});
-			
+
+			if($all_questions && is_array($all_questions)){
+				
+				$etsGetQuestion = array_filter($all_questions, function ($filterQuestion) {
+					return (isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve']);
+				});
+			}
+		
 			if(!empty($etsGetQuestion)){ 
 				end( $etsGetQuestion);
 				$keyData =  max(array_keys($etsGetQuestion));
@@ -374,11 +377,13 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 		$pagingType = get_option('ets_product_qa_paging_type' ); 
 		$productQaLength = get_option('ets_product_q_qa_list_length');  
 		$allQuestions = get_post_meta( $productId,'ets_question_answer', true );
+		if($allQuestions && is_array($allQuestions)){
+			
+			$filteredQue = array_filter($allQuestions, function ($filterQuestion){
+					return (isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve']);
 
-		$filteredQue = array_filter($allQuestions, function ($filterQuestion){
-				return (isset($filterQuestion['approve']) && $filterQuestion['approve'] == 'yes') || !isset($filterQuestion['approve']);
-
-		});
+			});
+		}
 
 		$offset = $a = $offsetdata + $productQaLength; 
 		$etsGetQuestion = [];
