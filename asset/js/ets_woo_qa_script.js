@@ -41,7 +41,7 @@ jQuery(document).ready(function(){
 	jQuery('#ets-load-more').click(function(e){
 		e.preventDefault();  
 		let submit = jQuery ("#ets-qus-form").serialize(); 
-		let qalength = jQuery('.ets_pro_qa_length p').text();  
+		let qalength = jQuery('.ets_pro_qa_length p').text(); 
 		let offset = jQuery('#ets_product_qa_length p').text(); 
 		if ( typeof offset == 'undefined' ) 
 			offset = 0 ; 
@@ -54,7 +54,7 @@ jQuery(document).ready(function(){
 				offset = res.offset;  
 				jQuery('.table1').append(res.htmlData);  
 				jQuery('.ets-accordion-response-add').append(res.htmlData);
-				jQuery('#ets_product_qa_length p').html(offset).hide(); 
+				jQuery('#ets_product_qa_length p').html(offset).hide();
 				if(offset >= qalength ){
 					jQuery("#ets-load-more").hide();
 				} 

@@ -91,11 +91,16 @@
 .border{
     border-bottom: 1px solid #cbcbcb;
 }
-.ets-qa-item p input{
+.ets-qa-item p input[type="text"]{
     background: #ededed;
     min-width: 77%;
     height: 35px;
     font-family: initial;
+}
+.ets-qa-item p input[type="checkbox"]{
+    background: #ededed;
+    min-width:4%;
+    height: 18px;
 }
 .ets-qa-item p textarea{
      
