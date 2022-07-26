@@ -191,8 +191,8 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 
 				printf(
 					__( 'Please <a href="%s">login</a> to post questions', 'ets_q_n_a' ),
-					wp_login_url(home_url( $wp->request ))
-				)
+					apply_filters( 'wc_add_qa_login_url', wp_login_url(home_url( $wp->request )) )
+				);
 			?>
 			<?php  
 			}  
