@@ -186,10 +186,14 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 				<input type="hidden" id="producttitle" name="ets_Product_Title" value="<?php echo $productTitle ?>"> 
 			</form>
 			<div id="ets_product_qa_length"><p></p></div> 
-			<a href="<?php echo apply_filters('wc_add_qa_login_url', $site_url.'/wp-login.php') ?>" class="ets-load-more">
-					
-			<?php echo __('Please login to post questions', 'ets_q_n_a');?>.
-			</a> 
+			<?php
+				global $wp;
+
+				printf(
+					__( 'Please <a href="%s">login</a> to post questions', 'ets_q_n_a' ),
+					wp_login_url(home_url( $wp->request ))
+				)
+			?>
 			<?php  
 			}  
 			$loadMoreButtonName = get_option('ets_load_more_button_name');
