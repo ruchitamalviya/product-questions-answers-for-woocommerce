@@ -499,7 +499,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	*  JS Variables
 	*/
 	public function qa_plugin_script() {
-		wp_enqueue_script( 'ets_woo_qa_script_js', ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_script.js',array( 'jquery' ),'1.6',true  );
+		wp_enqueue_script( 'ets_woo_qa_script_js', ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_script.js',array( 'jquery' ), '1.0' ,true  );
 			$addQusNonce = wp_create_nonce('ets-product-add-new-question');
 			$loadQaNonce = wp_create_nonce('ets-product-load-more-question');
 
@@ -516,7 +516,7 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	public function qa_plugin_style() {
 		wp_register_style(
 		    'ets_woo_qa_style_css',
-		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css'
+		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css', [] , '1.0'
 		); 
 		wp_enqueue_style( 'ets_woo_qa_style_css');
 		 

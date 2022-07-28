@@ -187,7 +187,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
   	public function product_panels_scripts_ui(){    
 		wp_register_script(
 			'jquery-ui-sortable', 
-			array( 'jquery' )
+			array( 'jquery' ),
+			'1.0'
 		);
 		wp_enqueue_script('jquery-ui-sortable'); 
 	}  
@@ -280,7 +281,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'    =>  "ets_admin_apv[$key]",
 								'class'	=>  "ets_admin_apv[$key] ets_admin_apv",
 								'name'  =>  "ets_admin_apv[$key]",
-								'value'	=> (isset($value['approve']) && $value['approve'] =='yes')  ? $value['approve'] :'no',
+								'value'	=> ((isset($value['approve']) && $value['approve'] =='yes') || !isset($value['approve']) ) ? 'yes' :'no',
 								'cbvalue' => 'yes',
 								
 	 							'label'   =>  __('Approve','ets_q_n_a').': ',
@@ -557,7 +558,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		    wp_register_script(
 				'ets_woo_qa_admin_script',
 				ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_admin_script.js',
-				array('jquery')
+				array('jquery'), 
+				'1.0'
 			); 
 	        wp_enqueue_script( 'ets_woo_qa_admin_script' );
 			
@@ -578,7 +580,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	public function admin_style() {
 		wp_register_style(
 		    'ets_woo_qa_style_css',
-		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css'
+		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css' ,
+		    [] ,
+         	'1.0'
 		); 
 		wp_enqueue_style( 'ets_woo_qa_style_css');
 		 
@@ -648,8 +652,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				'name'		        =>  "ets_admin_apv[$count]",
 				'class'				=>   "ets_admin_apv",		
 				'label'             =>   __('Approve','ets_q_n_a').': ' ,
-				'value'	=> (isset($value['approve']) && $value['approve'] =='yes')  ? $value['approve'] :'no',
-				'cbvalue' => 'yes',
+				'value'	            => 'yes',
+				'cbvalue'           => 'yes',
 			)
 		);
 
