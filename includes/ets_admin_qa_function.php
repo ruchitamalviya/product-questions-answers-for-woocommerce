@@ -187,7 +187,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
   	public function product_panels_scripts_ui(){    
 		wp_register_script(
 			'jquery-ui-sortable', 
-			array( 'jquery' ),'1.0'
+			array( 'jquery' ),
+			'1.0'
 		);
 		wp_enqueue_script('jquery-ui-sortable'); 
 	}  
@@ -557,7 +558,8 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		    wp_register_script(
 				'ets_woo_qa_admin_script',
 				ETS_WOO_QA_PATH . 'asset/js/ets_woo_qa_admin_script.js',
-				array('jquery'), '1.0'
+				array('jquery'), 
+				'1.0'
 			); 
 	        wp_enqueue_script( 'ets_woo_qa_admin_script' );
 			
@@ -578,8 +580,9 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	public function admin_style() {
 		wp_register_style(
 		    'ets_woo_qa_style_css',
-		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css' ,[] ,
-          '1.0'
+		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css' ,
+		    [] ,
+         	'1.0'
 		); 
 		wp_enqueue_style( 'ets_woo_qa_style_css');
 		 
