@@ -7,8 +7,8 @@ Author: ExpressTech Software Solutions Pvt. Ltd.
 Tags: questions, answers, discussions, woocommerce, forum, storefront, details,	e-commerce, expresstech
 Requires PHP: 7.0
 Requires at least: 5.6
-Tested up to: 5.8.1
-Stable tag: 1.1.1
+Tested up to: 6.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,3 +60,7 @@ No configuration needed! just install and it will start working from there, you 
 = 1.1.1 =
 - Fix: Fixed the email not being sent for questions and answers
 - Dev: Added the emails for changes in the answers by site admin.
+
+= 1.2.0 =
+- Dev: Added the ability to approve / unapprove questions and a global setting to record questions as approved or unapprove.
+- Dev: Added some hooks to customize the plugin.
