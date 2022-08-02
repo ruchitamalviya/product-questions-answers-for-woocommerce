@@ -516,7 +516,9 @@ class ETS_WOO_PRODUCT_USER_QUESTION_ANSWER
 	public function qa_plugin_style() {
 		wp_register_style(
 		    'ets_woo_qa_style_css',
-		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css', [] , '1.0'
+		    ETS_WOO_QA_PATH. 'asset/css/ets_woo_qa_style.css', 
+		    [] , 
+		    '1.0'
 		); 
 		wp_enqueue_style( 'ets_woo_qa_style_css');
 		 
