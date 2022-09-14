@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 // admin controller
 class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER 
 { 	
