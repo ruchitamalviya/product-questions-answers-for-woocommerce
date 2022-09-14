@@ -550,7 +550,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 * Secipt File include.
 	 */
 	public function admin_woo_qa_script() {
-		global $pagenow , $post; 
+		global $pagenow, $post; 
 		if ( $pagenow == 'post.php' && $post ) {
 			 
 			$addNewQaNonce = wp_create_nonce('ets-product-add-new-qa');
