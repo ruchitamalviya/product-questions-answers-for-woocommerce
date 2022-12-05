@@ -507,7 +507,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				// First time answer    
 				} elseif ( empty( trim( $before_save[$key]['answer'] ) ) && !empty( trim( $value['answer'] ) )  && !empty(trim($value['user_email'])) ) {  
 					$subject = __("Your Question was Answered",'ets_q_n_a'). ': ' . get_bloginfo('name');
-			 		$subject = apply_filters("wc_qa_new_answer_mail_subject", $message, $productId, $question, $answer);
+			 		$subject = apply_filters("wc_qa_new_answer_mail_subject", $subject, $productId, $question, $answer);
 			 		$message = "Dear " . $userName . ",<br><br>";
 			 		$message .= "<a href='$site_url'>" . $site_name . "</a> added an answer on the product <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answer ."</div>";
 
